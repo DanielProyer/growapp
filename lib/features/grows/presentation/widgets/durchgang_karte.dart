@@ -103,9 +103,9 @@ class DurchgangKarte extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 4,
                 children: [
-                  if (durchgang.pflanzenAnzahl != null)
+                  if (durchgang.pflanzenVerlauf != null)
                     _InfoChip(Icons.local_florist,
-                        '${durchgang.pflanzenAnzahl} Pflanzen'),
+                        '${durchgang.pflanzenVerlauf} Pfl.'),
                   if (durchgang.blueteStart != null)
                     _InfoChip(Icons.calendar_today_outlined,
                         'Blüte: ${df.format(durchgang.blueteStart!)}'),

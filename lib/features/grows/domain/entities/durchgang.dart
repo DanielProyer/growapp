@@ -4,7 +4,11 @@ class Durchgang {
   final String? sorteId;
   final String typ; // 'samen' oder 'steckling'
   final String status;
-  final int? pflanzenAnzahl;
+
+  // Pflanzenanzahl pro Phase (kann sinken durch Ausfälle/Aussortierung)
+  final int? pflanzenAnzahlStart;
+  final int? pflanzenAnzahlVegi;
+  final int? pflanzenAnzahlBluete;
 
   // Anbauflächen pro Phase (Pflanzen können umziehen)
   final String? stecklingAnbauflaecheId;
@@ -45,7 +49,9 @@ class Durchgang {
     this.sorteId,
     this.typ = 'steckling',
     this.status = 'vorbereitung',
-    this.pflanzenAnzahl,
+    this.pflanzenAnzahlStart,
+    this.pflanzenAnzahlVegi,
+    this.pflanzenAnzahlBluete,
     this.stecklingAnbauflaecheId,
     this.vegiAnbauflaecheId,
     this.blueteAnbauflaecheId,
@@ -105,6 +111,32 @@ class Durchgang {
 
   /// Label für die erste Phase (abhängig vom Typ)
   String get erstePhaseLabel => istSamen ? 'Keimung' : 'Steckling';
+
+  /// Aktuelle Pflanzenanzahl basierend auf Phase
+  int? get aktuellePflanzenAnzahl {
+    switch (status) {
+      case 'bluete':
+      case 'ernte':
+      case 'curing':
+      case 'beendet':
+        return pflanzenAnzahlBluete ?? pflanzenAnzahlVegi ?? pflanzenAnzahlStart;
+      case 'vegetation':
+        return pflanzenAnzahlVegi ?? pflanzenAnzahlStart;
+      default:
+        return pflanzenAnzahlStart;
+    }
+  }
+
+  /// Zusammenfassung der Pflanzenanzahl (z.B. "12 → 10 → 8")
+  String? get pflanzenVerlauf {
+    final werte = <int>[];
+    if (pflanzenAnzahlStart != null) werte.add(pflanzenAnzahlStart!);
+    if (pflanzenAnzahlVegi != null) werte.add(pflanzenAnzahlVegi!);
+    if (pflanzenAnzahlBluete != null) werte.add(pflanzenAnzahlBluete!);
+    if (werte.isEmpty) return null;
+    if (werte.length == 1) return '${werte.first}';
+    return werte.join(' → ');
+  }
 
   /// Ist der Durchgang aktiv?
   bool get istAktiv => status != 'beendet';

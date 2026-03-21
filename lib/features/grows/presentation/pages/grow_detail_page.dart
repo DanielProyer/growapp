@@ -110,7 +110,10 @@ class _DetailContent extends ConsumerWidget {
 
     final hatAnbauflaechen = d.stecklingAnbauflaecheId != null ||
         d.vegiAnbauflaecheId != null ||
-        d.blueteAnbauflaecheId != null;
+        d.blueteAnbauflaecheId != null ||
+        d.pflanzenAnzahlStart != null ||
+        d.pflanzenAnzahlVegi != null ||
+        d.pflanzenAnzahlBluete != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -199,9 +202,9 @@ class _DetailContent extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        if (d.pflanzenAnzahl != null) ...[
+                        if (d.aktuellePflanzenAnzahl != null) ...[
                           const SizedBox(height: 4),
-                          Text('${d.pflanzenAnzahl} Pflanzen',
+                          Text('${d.aktuellePflanzenAnzahl} Pflanzen aktuell',
                               style: theme.textTheme.bodyMedium
                                   ?.copyWith(color: Colors.grey[600])),
                         ],
@@ -224,15 +227,18 @@ class _DetailContent extends ConsumerWidget {
                               style: theme.textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w600)),
                           const SizedBox(height: 12),
-                          if (d.stecklingAnbauflaecheId != null)
+                          if (d.stecklingAnbauflaecheId != null || d.pflanzenAnzahlStart != null)
                             _DetailZeile(d.erstePhaseLabel,
-                                _flaecheLabel(d.stecklingAnbauflaecheName, d.stecklingZeltName)),
-                          if (d.vegiAnbauflaecheId != null)
+                                '${_flaecheLabel(d.stecklingAnbauflaecheName, d.stecklingZeltName)}'
+                                '${d.pflanzenAnzahlStart != null ? ' · ${d.pflanzenAnzahlStart} ${d.istSamen ? "Samen" : "Stecklinge"}' : ''}'),
+                          if (d.vegiAnbauflaecheId != null || d.pflanzenAnzahlVegi != null)
                             _DetailZeile('Vegetation',
-                                _flaecheLabel(d.vegiAnbauflaecheName, d.vegiZeltName)),
-                          if (d.blueteAnbauflaecheId != null)
+                                '${_flaecheLabel(d.vegiAnbauflaecheName, d.vegiZeltName)}'
+                                '${d.pflanzenAnzahlVegi != null ? ' · ${d.pflanzenAnzahlVegi} Pflanzen' : ''}'),
+                          if (d.blueteAnbauflaecheId != null || d.pflanzenAnzahlBluete != null)
                             _DetailZeile('Blüte',
-                                _flaecheLabel(d.blueteAnbauflaecheName, d.blueteZeltName)),
+                                '${_flaecheLabel(d.blueteAnbauflaecheName, d.blueteZeltName)}'
+                                '${d.pflanzenAnzahlBluete != null ? ' · ${d.pflanzenAnzahlBluete} Pflanzen' : ''}'),
                         ],
                       ),
                     ),
