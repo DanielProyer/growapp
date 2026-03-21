@@ -51,10 +51,14 @@ class TentsPage extends ConsumerWidget {
               itemCount: zelte.length,
               itemBuilder: (context, index) {
                 final zelt = zelte[index];
+                final flaechenAsync = ref.watch(anbauflaechenProvider(zelt.id));
+                final anzahl = flaechenAsync.valueOrNull?.length ?? 0;
+
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: ZeltKarte(
                     zelt: zelt,
+                    anbauflaechenAnzahl: anzahl,
                     onTap: () => context.go('/zelte/${zelt.id}'),
                   ),
                 );

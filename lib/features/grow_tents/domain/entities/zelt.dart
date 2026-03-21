@@ -1,16 +1,11 @@
-/// Zelt Entity - Repräsentiert ein Grow-Zelt / Grow-Bereich
+/// Zelt Entity - Repräsentiert ein Grow-Zelt (physische Hülle, gemeinsames Klima)
 class Zelt {
   final String id;
   final String name;
   final double? breiteCm;
   final double? tiefeCm;
   final double? hoeheCm;
-  final String? lichtTyp;
-  final int? lichtWatt;
-  final String? lueftung;
-  final String? bewaesserung;
   final String? standort;
-  final int etagen;
   final String? bemerkung;
   final String? erstelltVon;
   final DateTime? erstelltAm;
@@ -22,12 +17,7 @@ class Zelt {
     this.breiteCm,
     this.tiefeCm,
     this.hoeheCm,
-    this.lichtTyp,
-    this.lichtWatt,
-    this.lueftung,
-    this.bewaesserung,
     this.standort,
-    this.etagen = 1,
     this.bemerkung,
     this.erstelltVon,
     this.erstelltAm,
@@ -55,12 +45,7 @@ class Zelt {
     double? breiteCm,
     double? tiefeCm,
     double? hoeheCm,
-    String? lichtTyp,
-    int? lichtWatt,
-    String? lueftung,
-    String? bewaesserung,
     String? standort,
-    int? etagen,
     String? bemerkung,
     String? erstelltVon,
     DateTime? erstelltAm,
@@ -72,12 +57,7 @@ class Zelt {
       breiteCm: breiteCm ?? this.breiteCm,
       tiefeCm: tiefeCm ?? this.tiefeCm,
       hoeheCm: hoeheCm ?? this.hoeheCm,
-      lichtTyp: lichtTyp ?? this.lichtTyp,
-      lichtWatt: lichtWatt ?? this.lichtWatt,
-      lueftung: lueftung ?? this.lueftung,
-      bewaesserung: bewaesserung ?? this.bewaesserung,
       standort: standort ?? this.standort,
-      etagen: etagen ?? this.etagen,
       bemerkung: bemerkung ?? this.bemerkung,
       erstelltVon: erstelltVon ?? this.erstelltVon,
       erstelltAm: erstelltAm ?? this.erstelltAm,

@@ -5,11 +5,13 @@ import '../../domain/entities/zelt.dart';
 /// Karte für ein Zelt in der Listenansicht
 class ZeltKarte extends StatelessWidget {
   final Zelt zelt;
+  final int anbauflaechenAnzahl;
   final VoidCallback? onTap;
 
   const ZeltKarte({
     super.key,
     required this.zelt,
+    this.anbauflaechenAnzahl = 0,
     this.onTap,
   });
 
@@ -56,22 +58,15 @@ class ZeltKarte extends StatelessWidget {
                     icon: Icons.straighten,
                     label: zelt.dimensionen,
                   ),
-                  if (zelt.lichtTyp != null)
-                    _InfoChip(
-                      icon: Icons.light_mode_outlined,
-                      label: zelt.lichtWatt != null
-                          ? '${zelt.lichtTyp} (${zelt.lichtWatt}W)'
-                          : zelt.lichtTyp!,
-                    ),
-                  if (zelt.etagen > 1)
-                    _InfoChip(
-                      icon: Icons.layers_outlined,
-                      label: '${zelt.etagen} Etagen',
-                    ),
                   if (zelt.grundflaecheM2 != null)
                     _InfoChip(
                       icon: Icons.square_foot,
                       label: '${zelt.grundflaecheM2!.toStringAsFixed(2)} m²',
+                    ),
+                  if (anbauflaechenAnzahl > 0)
+                    _InfoChip(
+                      icon: Icons.grid_view_outlined,
+                      label: '$anbauflaechenAnzahl ${anbauflaechenAnzahl == 1 ? 'Anbaufläche' : 'Anbauflächen'}',
                     ),
                 ],
               ),

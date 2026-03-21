@@ -3,50 +3,58 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../domain/entities/zelt.dart';
+import '../../domain/entities/anbauflaeche.dart';
 import '../providers/zelte_provider.dart';
 
-class TentFormPage extends ConsumerStatefulWidget {
-  final Zelt? zelt;
+class AnbauflaecheFormPage extends ConsumerStatefulWidget {
+  final String zeltId;
+  final Anbauflaeche? anbauflaeche;
 
-  const TentFormPage({super.key, this.zelt});
+  const AnbauflaecheFormPage({
+    super.key,
+    required this.zeltId,
+    this.anbauflaeche,
+  });
 
   @override
-  ConsumerState<TentFormPage> createState() => _TentFormPageState();
+  ConsumerState<AnbauflaecheFormPage> createState() => _AnbauflaecheFormPageState();
 }
 
-class _TentFormPageState extends ConsumerState<TentFormPage> {
+class _AnbauflaecheFormPageState extends ConsumerState<AnbauflaecheFormPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   late final TextEditingController _nameController;
-  late final TextEditingController _breiteController;
-  late final TextEditingController _tiefeController;
-  late final TextEditingController _hoeheController;
-  late final TextEditingController _standortController;
+  late final TextEditingController _lichtTypController;
+  late final TextEditingController _lichtWattController;
+  late final TextEditingController _lueftungController;
+  late final TextEditingController _bewaesserungController;
+  late final TextEditingController _etageController;
   late final TextEditingController _bemerkungController;
 
-  bool get _isEdit => widget.zelt != null;
+  bool get _isEdit => widget.anbauflaeche != null;
 
   @override
   void initState() {
     super.initState();
-    final z = widget.zelt;
-    _nameController = TextEditingController(text: z?.name ?? '');
-    _breiteController = TextEditingController(text: z?.breiteCm?.toStringAsFixed(0) ?? '');
-    _tiefeController = TextEditingController(text: z?.tiefeCm?.toStringAsFixed(0) ?? '');
-    _hoeheController = TextEditingController(text: z?.hoeheCm?.toStringAsFixed(0) ?? '');
-    _standortController = TextEditingController(text: z?.standort ?? '');
-    _bemerkungController = TextEditingController(text: z?.bemerkung ?? '');
+    final a = widget.anbauflaeche;
+    _nameController = TextEditingController(text: a?.name ?? '');
+    _lichtTypController = TextEditingController(text: a?.lichtTyp ?? '');
+    _lichtWattController = TextEditingController(text: a?.lichtWatt?.toString() ?? '');
+    _lueftungController = TextEditingController(text: a?.lueftung ?? '');
+    _bewaesserungController = TextEditingController(text: a?.bewaesserung ?? '');
+    _etageController = TextEditingController(text: a?.etage?.toString() ?? '');
+    _bemerkungController = TextEditingController(text: a?.bemerkung ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _breiteController.dispose();
-    _tiefeController.dispose();
-    _hoeheController.dispose();
-    _standortController.dispose();
+    _lichtTypController.dispose();
+    _lichtWattController.dispose();
+    _lueftungController.dispose();
+    _bewaesserungController.dispose();
+    _etageController.dispose();
     _bemerkungController.dispose();
     super.dispose();
   }
@@ -61,28 +69,31 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
     setState(() => _isLoading = true);
 
     try {
-      final zelt = Zelt(
-        id: widget.zelt?.id ?? '',
+      final a = Anbauflaeche(
+        id: widget.anbauflaeche?.id ?? '',
+        zeltId: widget.zeltId,
         name: _nameController.text.trim(),
-        breiteCm: double.tryParse(_breiteController.text),
-        tiefeCm: double.tryParse(_tiefeController.text),
-        hoeheCm: double.tryParse(_hoeheController.text),
-        standort: _trimOrNull(_standortController),
+        lichtTyp: _trimOrNull(_lichtTypController),
+        lichtWatt: int.tryParse(_lichtWattController.text),
+        lueftung: _trimOrNull(_lueftungController),
+        bewaesserung: _trimOrNull(_bewaesserungController),
+        etage: int.tryParse(_etageController.text),
         bemerkung: _trimOrNull(_bemerkungController),
       );
 
-      final repo = ref.read(zelteRepositoryProvider);
+      final ds = ref.read(anbauflaechenDatasourceProvider);
       if (_isEdit) {
-        await repo.aktualisieren(zelt);
+        await anbauflaecheAktualisieren(ds, a);
       } else {
-        await repo.erstellen(zelt);
+        await anbauflaecheErstellen(ds, a);
       }
 
-      await ref.read(zelteListeProvider.notifier).aktualisieren();
+      // Anbauflächen-Liste neu laden
+      ref.invalidate(anbauflaechenProvider(widget.zeltId));
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_isEdit ? 'Zelt aktualisiert' : 'Zelt erstellt')),
+          SnackBar(content: Text(_isEdit ? 'Anbaufläche aktualisiert' : 'Anbaufläche erstellt')),
         );
         context.pop();
       }
@@ -101,7 +112,7 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Zelt bearbeiten' : 'Neues Zelt'),
+        title: Text(_isEdit ? 'Anbaufläche bearbeiten' : 'Neue Anbaufläche'),
         actions: [
           TextButton.icon(
             onPressed: _isLoading ? null : _speichern,
@@ -126,43 +137,34 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Name *', hintText: 'z.B. Doppelzelt P2/P3'),
+                    decoration: const InputDecoration(labelText: 'Name *', hintText: 'z.B. P2, Etage 1 – Stecklinge'),
                     validator: (v) => (v == null || v.trim().isEmpty) ? 'Name ist erforderlich' : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
-                    controller: _standortController,
-                    decoration: const InputDecoration(labelText: 'Standort', hintText: 'z.B. Keller, Growraum'),
+                    controller: _etageController,
+                    decoration: const InputDecoration(labelText: 'Etage (optional)', hintText: 'z.B. 1, 2, 3'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
 
                   const SizedBox(height: 28),
 
-                  const _SectionHeader(title: 'Dimensionen'),
+                  const _SectionHeader(title: 'Beleuchtung'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: TextFormField(
-                          controller: _breiteController,
-                          decoration: const InputDecoration(labelText: 'Breite', suffixText: 'cm'),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          controller: _lichtTypController,
+                          decoration: const InputDecoration(labelText: 'Lichttyp', hintText: 'z.B. LED, NDL, CMH'),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: TextFormField(
-                          controller: _tiefeController,
-                          decoration: const InputDecoration(labelText: 'Tiefe', suffixText: 'cm'),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _hoeheController,
-                          decoration: const InputDecoration(labelText: 'Höhe', suffixText: 'cm'),
+                          controller: _lichtWattController,
+                          decoration: const InputDecoration(labelText: 'Leistung', suffixText: 'Watt'),
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
@@ -172,24 +174,30 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
 
                   const SizedBox(height: 28),
 
+                  const _SectionHeader(title: 'Ausstattung'),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _lueftungController,
+                    decoration: const InputDecoration(labelText: 'Lüftung', hintText: 'z.B. Abluft 150mm + AKF'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _bewaesserungController,
+                    decoration: const InputDecoration(labelText: 'Bewässerung', hintText: 'z.B. Autopot, Blumat, Hand'),
+                  ),
+
+                  const SizedBox(height: 28),
+
                   const _SectionHeader(title: 'Bemerkung'),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _bemerkungController,
                     decoration: const InputDecoration(
-                      labelText: 'Allgemeine Bemerkung',
+                      labelText: 'Bemerkung',
                       alignLabelWithHint: true,
                     ),
-                    maxLines: 4,
+                    maxLines: 3,
                   ),
-
-                  const SizedBox(height: 16),
-
-                  if (!_isEdit)
-                    Text(
-                      'Anbauflächen (Beleuchtung, Lüftung, Bewässerung) kannst du nach dem Erstellen hinzufügen.',
-                      style: TextStyle(color: Colors.grey[500], fontSize: 13),
-                    ),
 
                   const SizedBox(height: 32),
 
@@ -200,7 +208,7 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
                       icon: _isLoading
                           ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                           : const Icon(Icons.save),
-                      label: Text(_isEdit ? 'Zelt aktualisieren' : 'Zelt erstellen'),
+                      label: Text(_isEdit ? 'Anbaufläche aktualisieren' : 'Anbaufläche erstellen'),
                     ),
                   ),
                   const SizedBox(height: 32),
