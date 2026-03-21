@@ -348,7 +348,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _bluetezeitZuechterController,
-                          decoration: const InputDecoration(labelText: 'Blütezeit Züchter (Tage)'),
+                          decoration: const InputDecoration(labelText: 'Blütezeit Züchter', suffixText: 'Tage'),
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
@@ -357,7 +357,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _bluetezeitEigenController,
-                          decoration: const InputDecoration(labelText: 'Blütezeit Eigen (Tage)'),
+                          decoration: const InputDecoration(labelText: 'Blütezeit Eigen', suffixText: 'Tage'),
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
@@ -370,14 +370,14 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _pflanzenhoheZuechterController,
-                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Züchter', hintText: 'z.B. 80-100cm'),
+                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Züchter', suffixText: 'cm'),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: TextFormField(
                           controller: _pflanzenhoheEigenController,
-                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Eigen', hintText: 'z.B. 90cm'),
+                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Eigen', suffixText: 'cm'),
                         ),
                       ),
                     ],
