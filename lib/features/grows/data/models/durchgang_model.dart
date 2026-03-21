@@ -4,10 +4,12 @@ import '../../domain/entities/durchgang.dart';
 class DurchgangModel extends Durchgang {
   const DurchgangModel({
     required super.id,
-    super.anbauflaecheId,
     super.sorteId,
     super.status,
     super.pflanzenAnzahl,
+    super.stecklingAnbauflaecheId,
+    super.vegiAnbauflaecheId,
+    super.blueteAnbauflaecheId,
     super.stecklingDatum,
     super.vegiStart,
     super.blueteStart,
@@ -25,22 +27,36 @@ class DurchgangModel extends Durchgang {
     super.erstelltAm,
     super.aktualisiertAm,
     super.sorteName,
-    super.anbauflaecheName,
-    super.zeltName,
+    super.stecklingAnbauflaecheName,
+    super.stecklingZeltName,
+    super.vegiAnbauflaecheName,
+    super.vegiZeltName,
+    super.blueteAnbauflaecheName,
+    super.blueteZeltName,
   });
 
   factory DurchgangModel.fromJson(Map<String, dynamic> json) {
-    // Verknüpfte Daten aus Join
+    // Verknüpfte Daten aus Joins
     final sorteData = json['sorten'] as Map<String, dynamic>?;
-    final flaecheData = json['anbauflaechen'] as Map<String, dynamic>?;
-    final zeltData = flaecheData?['zelte'] as Map<String, dynamic>?;
+
+    // Drei separate Anbauflächen-Joins (mit Alias)
+    final stecklingAf = json['steckling_af'] as Map<String, dynamic>?;
+    final stecklingZelt = stecklingAf?['zelte'] as Map<String, dynamic>?;
+
+    final vegiAf = json['vegi_af'] as Map<String, dynamic>?;
+    final vegiZelt = vegiAf?['zelte'] as Map<String, dynamic>?;
+
+    final blueteAf = json['bluete_af'] as Map<String, dynamic>?;
+    final blueteZelt = blueteAf?['zelte'] as Map<String, dynamic>?;
 
     return DurchgangModel(
       id: json['id'] as String,
-      anbauflaecheId: json['anbauflaeche_id'] as String?,
       sorteId: json['sorte_id'] as String?,
       status: json['status'] as String? ?? 'vorbereitung',
       pflanzenAnzahl: (json['pflanzen_anzahl'] as num?)?.toInt(),
+      stecklingAnbauflaecheId: json['steckling_anbauflaeche_id'] as String?,
+      vegiAnbauflaecheId: json['vegi_anbauflaeche_id'] as String?,
+      blueteAnbauflaecheId: json['bluete_anbauflaeche_id'] as String?,
       stecklingDatum: _parseDate(json['steckling_datum']),
       vegiStart: _parseDate(json['vegi_start']),
       blueteStart: _parseDate(json['bluete_start']),
@@ -62,8 +78,12 @@ class DurchgangModel extends Durchgang {
           ? DateTime.parse(json['aktualisiert_am'] as String)
           : null,
       sorteName: sorteData?['name'] as String?,
-      anbauflaecheName: flaecheData?['name'] as String?,
-      zeltName: zeltData?['name'] as String?,
+      stecklingAnbauflaecheName: stecklingAf?['name'] as String?,
+      stecklingZeltName: stecklingZelt?['name'] as String?,
+      vegiAnbauflaecheName: vegiAf?['name'] as String?,
+      vegiZeltName: vegiZelt?['name'] as String?,
+      blueteAnbauflaecheName: blueteAf?['name'] as String?,
+      blueteZeltName: blueteZelt?['name'] as String?,
     );
   }
 
@@ -75,10 +95,12 @@ class DurchgangModel extends Durchgang {
   factory DurchgangModel.fromEntity(Durchgang d) {
     return DurchgangModel(
       id: d.id,
-      anbauflaecheId: d.anbauflaecheId,
       sorteId: d.sorteId,
       status: d.status,
       pflanzenAnzahl: d.pflanzenAnzahl,
+      stecklingAnbauflaecheId: d.stecklingAnbauflaecheId,
+      vegiAnbauflaecheId: d.vegiAnbauflaecheId,
+      blueteAnbauflaecheId: d.blueteAnbauflaecheId,
       stecklingDatum: d.stecklingDatum,
       vegiStart: d.vegiStart,
       blueteStart: d.blueteStart,
@@ -96,19 +118,26 @@ class DurchgangModel extends Durchgang {
       erstelltAm: d.erstelltAm,
       aktualisiertAm: d.aktualisiertAm,
       sorteName: d.sorteName,
-      anbauflaecheName: d.anbauflaecheName,
-      zeltName: d.zeltName,
+      stecklingAnbauflaecheName: d.stecklingAnbauflaecheName,
+      stecklingZeltName: d.stecklingZeltName,
+      vegiAnbauflaecheName: d.vegiAnbauflaecheName,
+      vegiZeltName: d.vegiZeltName,
+      blueteAnbauflaecheName: d.blueteAnbauflaecheName,
+      blueteZeltName: d.blueteZeltName,
     );
   }
 
-  static String? _dateToString(DateTime? d) => d?.toIso8601String().split('T').first;
+  static String? _dateToString(DateTime? d) =>
+      d?.toIso8601String().split('T').first;
 
   Map<String, dynamic> toJson() {
     return {
-      'anbauflaeche_id': anbauflaecheId,
       'sorte_id': sorteId,
       'status': status,
       'pflanzen_anzahl': pflanzenAnzahl,
+      'steckling_anbauflaeche_id': stecklingAnbauflaecheId,
+      'vegi_anbauflaeche_id': vegiAnbauflaecheId,
+      'bluete_anbauflaeche_id': blueteAnbauflaecheId,
       'steckling_datum': _dateToString(stecklingDatum),
       'vegi_start': _dateToString(vegiStart),
       'bluete_start': _dateToString(blueteStart),

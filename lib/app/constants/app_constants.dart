@@ -35,6 +35,7 @@ class AppConstants {
   // Durchgang-Status
   static const List<String> durchgangStatus = [
     'vorbereitung',
+    'steckling',
     'vegetation',
     'bluete',
     'ernte',

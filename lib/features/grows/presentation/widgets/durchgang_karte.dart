@@ -13,6 +13,8 @@ class DurchgangKarte extends StatelessWidget {
     switch (status) {
       case 'vorbereitung':
         return Colors.grey;
+      case 'steckling':
+        return Colors.teal;
       case 'vegetation':
         return Colors.lightGreen;
       case 'bluete':
@@ -74,10 +76,10 @@ class DurchgangKarte extends StatelessWidget {
                 ],
               ),
 
-              if (durchgang.zeltName != null) ...[
+              if (durchgang.aktuellerZeltName != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  durchgang.zeltName!,
+                  durchgang.aktuellerZeltName!,
                   style: theme.textTheme.bodyMedium
                       ?.copyWith(color: Colors.grey[600]),
                 ),

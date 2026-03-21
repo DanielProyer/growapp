@@ -9,9 +9,11 @@ class DurchgaengeDatasource {
 
   DurchgaengeDatasource(this._client);
 
-  /// Select mit Joins auf Sorte und Anbaufläche→Zelt
-  static const _selectQuery =
-      '*, sorten(name), anbauflaechen(name, zelte(name))';
+  /// Select mit Joins auf Sorte und drei Anbauflächen (je Phase) → Zelt
+  static const _selectQuery = '*, sorten(name), '
+      'steckling_af:anbauflaechen!steckling_anbauflaeche_id(name, zelte(name)), '
+      'vegi_af:anbauflaechen!vegi_anbauflaeche_id(name, zelte(name)), '
+      'bluete_af:anbauflaechen!bluete_anbauflaeche_id(name, zelte(name))';
 
   Future<List<DurchgangModel>> alleLaden() async {
     final response = await _client

@@ -46,6 +46,7 @@ class _DetailContent extends ConsumerWidget {
   Color _statusFarbe(String status) {
     switch (status) {
       case 'vorbereitung': return Colors.grey;
+      case 'steckling': return Colors.teal;
       case 'vegetation': return Colors.lightGreen;
       case 'bluete': return Colors.purple;
       case 'ernte': return Colors.amber;
@@ -94,11 +95,21 @@ class _DetailContent extends ConsumerWidget {
     }
   }
 
+  String _flaecheLabel(String? flaecheName, String? zeltName) {
+    if (flaecheName == null) return '–';
+    if (zeltName != null) return '$zeltName → $flaecheName';
+    return flaecheName;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final df = DateFormat('dd.MM.yyyy');
     final d = durchgang;
+
+    final hatAnbauflaechen = d.stecklingAnbauflaecheId != null ||
+        d.vegiAnbauflaecheId != null ||
+        d.blueteAnbauflaecheId != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -140,7 +151,7 @@ class _DetailContent extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                d.titel,
+                                d.sorteName ?? 'Unbekannte Sorte',
                                 style: theme.textTheme.headlineSmall
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
@@ -164,12 +175,6 @@ class _DetailContent extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        if (d.zeltName != null) ...[
-                          const SizedBox(height: 8),
-                          Text('Zelt: ${d.zeltName}',
-                              style: theme.textTheme.bodyLarge
-                                  ?.copyWith(color: Colors.grey[600])),
-                        ],
                         if (d.pflanzenAnzahl != null) ...[
                           const SizedBox(height: 4),
                           Text('${d.pflanzenAnzahl} Pflanzen',
@@ -182,6 +187,34 @@ class _DetailContent extends ConsumerWidget {
                 ),
 
                 const SizedBox(height: 16),
+
+                // Anbauflächen pro Phase
+                if (hatAnbauflaechen)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Anbauflächen',
+                              style: theme.textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 12),
+                          if (d.stecklingAnbauflaecheId != null)
+                            _DetailZeile('Steckling/Keimung',
+                                _flaecheLabel(d.stecklingAnbauflaecheName, d.stecklingZeltName)),
+                          if (d.vegiAnbauflaecheId != null)
+                            _DetailZeile('Vegetation',
+                                _flaecheLabel(d.vegiAnbauflaecheName, d.vegiZeltName)),
+                          if (d.blueteAnbauflaecheId != null)
+                            _DetailZeile('Blüte',
+                                _flaecheLabel(d.blueteAnbauflaecheName, d.blueteZeltName)),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                if (hatAnbauflaechen) const SizedBox(height: 16),
 
                 // Termine
                 Card(

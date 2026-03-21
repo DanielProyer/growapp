@@ -24,8 +24,10 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  String? _anbauflaecheId;
   String? _sorteId;
+  String? _stecklingAnbauflaecheId;
+  String? _vegiAnbauflaecheId;
+  String? _blueteAnbauflaecheId;
   late String _status;
   late final TextEditingController _pflanzenAnzahlController;
   late final TextEditingController _bemerkungController;
@@ -42,8 +44,10 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
   void initState() {
     super.initState();
     final d = widget.durchgang;
-    _anbauflaecheId = d?.anbauflaecheId;
     _sorteId = d?.sorteId;
+    _stecklingAnbauflaecheId = d?.stecklingAnbauflaecheId;
+    _vegiAnbauflaecheId = d?.vegiAnbauflaecheId;
+    _blueteAnbauflaecheId = d?.blueteAnbauflaecheId;
     _status = d?.status ?? 'vorbereitung';
     _pflanzenAnzahlController =
         TextEditingController(text: d?.pflanzenAnzahl?.toString() ?? '');
@@ -84,10 +88,12 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
     try {
       final d = Durchgang(
         id: widget.durchgang?.id ?? '',
-        anbauflaecheId: _anbauflaecheId,
         sorteId: _sorteId,
         status: _status,
         pflanzenAnzahl: int.tryParse(_pflanzenAnzahlController.text),
+        stecklingAnbauflaecheId: _stecklingAnbauflaecheId,
+        vegiAnbauflaecheId: _vegiAnbauflaecheId,
+        blueteAnbauflaecheId: _blueteAnbauflaecheId,
         stecklingDatum: _stecklingDatum,
         vegiStart: _vegiStart,
         blueteStart: _blueteStart,
@@ -204,23 +210,6 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
 
                   const SizedBox(height: 12),
 
-                  // Anbaufläche
-                  DropdownButtonFormField<String>(
-                    initialValue: _anbauflaecheId,
-                    decoration:
-                        const InputDecoration(labelText: 'Anbaufläche *'),
-                    items: flaechenOptionen
-                        .map((o) => DropdownMenuItem(
-                            value: o.flaeche.id,
-                            child: Text('${o.zeltName} → ${o.flaeche.name}')))
-                        .toList(),
-                    onChanged: (v) => setState(() => _anbauflaecheId = v),
-                    validator: (v) =>
-                        v == null ? 'Anbaufläche auswählen' : null,
-                  ),
-
-                  const SizedBox(height: 12),
-
                   Row(
                     children: [
                       Expanded(
@@ -252,6 +241,46 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
                         ),
                       ),
                     ],
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // ── Anbauflächen pro Phase ──
+                  const _SectionHeader(title: 'Anbauflächen'),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Pflanzen können je nach Phase auf unterschiedlichen Anbauflächen stehen.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Steckling-Anbaufläche
+                  _AnbauflaecheDropdown(
+                    label: 'Steckling / Keimung',
+                    value: _stecklingAnbauflaecheId,
+                    optionen: flaechenOptionen,
+                    onChanged: (v) =>
+                        setState(() => _stecklingAnbauflaecheId = v),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Vegi-Anbaufläche
+                  _AnbauflaecheDropdown(
+                    label: 'Vegetation',
+                    value: _vegiAnbauflaecheId,
+                    optionen: flaechenOptionen,
+                    onChanged: (v) =>
+                        setState(() => _vegiAnbauflaecheId = v),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Blüte-Anbaufläche
+                  _AnbauflaecheDropdown(
+                    label: 'Blüte',
+                    value: _blueteAnbauflaecheId,
+                    optionen: flaechenOptionen,
+                    onChanged: (v) =>
+                        setState(() => _blueteAnbauflaecheId = v),
                   ),
 
                   const SizedBox(height: 28),
@@ -362,6 +391,37 @@ class _FlaecheOption {
   final Anbauflaeche flaeche;
   final String zeltName;
   _FlaecheOption(this.flaeche, this.zeltName);
+}
+
+class _AnbauflaecheDropdown extends StatelessWidget {
+  final String label;
+  final String? value;
+  final List<_FlaecheOption> optionen;
+  final ValueChanged<String?> onChanged;
+
+  const _AnbauflaecheDropdown({
+    required this.label,
+    required this.value,
+    required this.optionen,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveValue = optionen.any((o) => o.flaeche.id == value) ? value : null;
+    return DropdownButtonFormField<String>(
+      key: ValueKey('$label-$effectiveValue'),
+      initialValue: effectiveValue,
+      decoration: InputDecoration(labelText: label),
+      items: [
+        const DropdownMenuItem(value: null, child: Text('– nicht zugewiesen –')),
+        ...optionen.map((o) => DropdownMenuItem(
+            value: o.flaeche.id,
+            child: Text('${o.zeltName} → ${o.flaeche.name}'))),
+      ],
+      onChanged: onChanged,
+    );
+  }
 }
 
 class _DateField extends StatelessWidget {
