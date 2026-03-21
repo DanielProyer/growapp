@@ -101,6 +101,11 @@ class DashboardPage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.grey.withAlpha(50)),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Center(
@@ -155,6 +160,11 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: color.withAlpha(40)),
+      ),
       child: InkWell(
         onTap: onTap,
         child: Padding(
