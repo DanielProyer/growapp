@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/supabase/supabase_client.dart';
 import '../features/auth/presentation/pages/login_page.dart';
@@ -19,12 +20,19 @@ import 'route_names.dart';
 import 'app_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final user = ref.watch(currentUserProvider);
+  // Notifier triggert Router-Refresh bei Auth-Änderungen
+  final authNotifier = ValueNotifier<int>(0);
+  ref.listen(authStateProvider, (_, __) {
+    authNotifier.value++;
+  });
+  ref.onDispose(() => authNotifier.dispose());
 
   return GoRouter(
     initialLocation: '/dashboard',
+    refreshListenable: authNotifier,
     redirect: (context, state) {
-      final isLoggedIn = user != null;
+      final isLoggedIn =
+          Supabase.instance.client.auth.currentUser != null;
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
