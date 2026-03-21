@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/constants/app_constants.dart';
@@ -92,7 +91,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
   }
 
   Future<void> _speichern() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _isLoading = true);
 
     try {
@@ -138,7 +137,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
               content: Text(
                   _isEdit ? 'Durchgang aktualisiert' : 'Durchgang erstellt')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

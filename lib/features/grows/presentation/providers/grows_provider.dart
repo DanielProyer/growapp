@@ -38,11 +38,15 @@ class DurchgaengeListeNotifier extends AsyncNotifier<List<Durchgang>> {
   }
 }
 
-/// Einzelner Durchgang
+/// Einzelner Durchgang (abgeleitet von Liste, reaktiv)
 final durchgangProvider =
-    FutureProvider.family<Durchgang?, String>((ref, id) async {
-  final ds = ref.watch(durchgaengeDatasourceProvider);
-  return await ds.laden(id);
+    Provider.family<AsyncValue<Durchgang?>, String>((ref, id) {
+  return ref.watch(durchgaengeListeProvider).whenData((liste) {
+    for (final d in liste) {
+      if (d.id == id) return d;
+    }
+    return null;
+  });
 });
 
 /// Aktive Durchgänge (für Dashboard)

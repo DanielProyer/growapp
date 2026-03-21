@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../domain/entities/anbauflaeche.dart';
 import '../providers/zelte_provider.dart';
 
@@ -65,7 +63,7 @@ class _AnbauflaecheFormPageState extends ConsumerState<AnbauflaecheFormPage> {
   }
 
   Future<void> _speichern() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _isLoading = true);
 
     try {
@@ -95,7 +93,7 @@ class _AnbauflaecheFormPageState extends ConsumerState<AnbauflaecheFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_isEdit ? 'Anbaufläche aktualisiert' : 'Anbaufläche erstellt')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

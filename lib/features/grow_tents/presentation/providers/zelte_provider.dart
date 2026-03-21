@@ -48,10 +48,15 @@ class ZelteListeNotifier extends AsyncNotifier<List<Zelt>> {
   }
 }
 
+/// Einzelnes Zelt (abgeleitet von Liste, reaktiv)
 final zeltProvider =
-    FutureProvider.family<Zelt?, String>((ref, id) async {
-  final repo = ref.watch(zelteRepositoryProvider);
-  return await repo.laden(id);
+    Provider.family<AsyncValue<Zelt?>, String>((ref, id) {
+  return ref.watch(zelteListeProvider).whenData((liste) {
+    for (final z in liste) {
+      if (z.id == id) return z;
+    }
+    return null;
+  });
 });
 
 // ── Anbauflächen ──

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../domain/entities/zelt.dart';
 import '../providers/zelte_provider.dart';
 
@@ -57,7 +55,7 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
   }
 
   Future<void> _speichern() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _isLoading = true);
 
     try {
@@ -84,7 +82,7 @@ class _TentFormPageState extends ConsumerState<TentFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_isEdit ? 'Zelt aktualisiert' : 'Zelt erstellt')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

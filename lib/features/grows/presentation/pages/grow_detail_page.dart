@@ -121,13 +121,16 @@ class _DetailContent extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final gespeichert = await Navigator.push<bool>(
                 context,
                 MaterialPageRoute(
                   builder: (_) => GrowFormPage(durchgang: d),
                 ),
               );
+              if (gespeichert == true) {
+                ref.invalidate(durchgaengeListeProvider);
+              }
             },
           ),
           IconButton(

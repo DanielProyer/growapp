@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../grows/domain/entities/durchgang.dart';
@@ -155,7 +154,7 @@ class _DailyLogFormPageState extends ConsumerState<DailyLogFormPage> {
   }
 
   Future<void> _speichern() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_durchgangId == null) return;
 
     setState(() => _isLoading = true);
@@ -213,7 +212,7 @@ class _DailyLogFormPageState extends ConsumerState<DailyLogFormPage> {
               content:
                   Text(_isEdit ? 'Log aktualisiert' : 'Log erstellt')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {
@@ -238,10 +237,10 @@ class _DailyLogFormPageState extends ConsumerState<DailyLogFormPage> {
         content: const Text('Dieser Eintrag wird unwiderruflich gelöscht.'),
         actions: [
           TextButton(
-              onPressed: () => ctx.pop(false),
+              onPressed: () => Navigator.pop(ctx, false),
               child: const Text('Abbrechen')),
           TextButton(
-              onPressed: () => ctx.pop(true),
+              onPressed: () => Navigator.pop(ctx, true),
               child: const Text('Löschen',
                   style: TextStyle(color: Colors.red))),
         ],
@@ -260,7 +259,7 @@ class _DailyLogFormPageState extends ConsumerState<DailyLogFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Log gelöscht')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {
