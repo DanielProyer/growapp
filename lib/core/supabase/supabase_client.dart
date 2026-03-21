@@ -7,9 +7,10 @@ final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
 });
 
-/// Aktueller User Provider
+/// Aktueller User Provider (reaktiv – hört auf Auth-Änderungen)
 final currentUserProvider = Provider<User?>((ref) {
-  return ref.watch(supabaseClientProvider).auth.currentUser;
+  ref.watch(authStateProvider);
+  return Supabase.instance.client.auth.currentUser;
 });
 
 /// Auth State Stream Provider
