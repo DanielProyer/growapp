@@ -54,10 +54,18 @@ class AppConstants {
 
   // Sorten-Status
   static const List<String> sortenStatus = [
+    'geplant',
     'aktiv',
     'selektion',
     'beendet',
     'stash',
+  ];
+
+  // Sorten-Geschlecht
+  static const List<String> sortenGeschlecht = [
+    'feminisiert',
+    'regulaer',
+    'automatik',
   ];
 
   // Schädlingstypen

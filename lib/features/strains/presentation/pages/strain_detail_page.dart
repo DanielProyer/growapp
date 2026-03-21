@@ -44,6 +44,8 @@ class _DetailContent extends ConsumerWidget {
 
   Color _statusFarbe(String status) {
     switch (status) {
+      case 'geplant':
+        return Colors.purple;
       case 'aktiv':
         return Colors.green;
       case 'selektion':
@@ -177,6 +179,13 @@ class _DetailContent extends ConsumerWidget {
                             ),
                           ),
                         ],
+                        const SizedBox(height: 4),
+                        Text(
+                          'Geschlecht: ${sorte.geschlechtLabel}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -206,79 +215,6 @@ class _DetailContent extends ConsumerWidget {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-
-                // Blütezeit
-                if (sorte.bluetezeitZuechter != null ||
-                    sorte.bluetezeitEigen != null)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Blütezeit',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 12),
-                          if (sorte.bluetezeitZuechter != null)
-                            _DetailZeile('Züchter',
-                                '${sorte.bluetezeitZuechter} Tage'),
-                          if (sorte.bluetezeitEigen != null)
-                            _DetailZeile(
-                                'Eigen', '${sorte.bluetezeitEigen} Tage'),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                const SizedBox(height: 16),
-
-                // Bestand
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Bestand',
-                            style: theme.textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 12),
-                        _DetailZeile(
-                            'Samen vorrätig', '${sorte.samenAnzahl}'),
-                        if (sorte.keimquote != null)
-                          _DetailZeile('Keimquote', '${sorte.keimquote}%'),
-                        _DetailZeile('Mutterpflanze',
-                            sorte.hatMutterpflanze ? 'Ja' : 'Nein'),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Anbau
-                if (sorte.toppingEmpfohlen || sorte.growTipp != null)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Anbau',
-                              style: theme.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 12),
-                          _DetailZeile('Topping empfohlen',
-                              sorte.toppingEmpfohlen ? 'Ja' : 'Nein'),
-                          if (sorte.growTipp != null)
-                            _DetailZeile('Grow-Tipp', sorte.growTipp!),
-                        ],
-                      ),
-                    ),
-                  ),
 
                 const SizedBox(height: 16),
 
@@ -312,29 +248,69 @@ class _DetailContent extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // Ertrag
-                if (sorte.ertragSelektion != null ||
-                    sorte.ertragProduktion != null)
+                // Anbau
+                if (sorte.bluetezeitZuechter != null ||
+                    sorte.bluetezeitEigen != null ||
+                    sorte.pflanzenhoheZuechter != null ||
+                    sorte.pflanzenhoheEigen != null ||
+                    sorte.ertragZuechter != null ||
+                    sorte.ertragEigen != null ||
+                    sorte.growTipp != null)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Ertrag',
+                          Text('Anbau',
                               style: theme.textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w600)),
                           const SizedBox(height: 12),
-                          if (sorte.ertragSelektion != null)
+                          if (sorte.bluetezeitZuechter != null)
+                            _DetailZeile('Blütezeit Züchter',
+                                '${sorte.bluetezeitZuechter} Tage'),
+                          if (sorte.bluetezeitEigen != null)
+                            _DetailZeile('Blütezeit Eigen',
+                                '${sorte.bluetezeitEigen} Tage'),
+                          if (sorte.pflanzenhoheZuechter != null)
+                            _DetailZeile('Pflanzenhöhe Züchter',
+                                sorte.pflanzenhoheZuechter!),
+                          if (sorte.pflanzenhoheEigen != null)
+                            _DetailZeile('Pflanzenhöhe Eigen',
+                                sorte.pflanzenhoheEigen!),
+                          if (sorte.ertragZuechter != null)
                             _DetailZeile(
-                                'Selektion', sorte.ertragSelektion!),
-                          if (sorte.ertragProduktion != null)
-                            _DetailZeile(
-                                'Produktion', sorte.ertragProduktion!),
+                                'Ertrag Züchter', sorte.ertragZuechter!),
+                          if (sorte.ertragEigen != null)
+                            _DetailZeile('Ertrag Eigen', sorte.ertragEigen!),
+                          if (sorte.growTipp != null)
+                            _DetailZeile('Grow-Tipp', sorte.growTipp!),
                         ],
                       ),
                     ),
                   ),
+
+                const SizedBox(height: 16),
+
+                // Bestand
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Bestand',
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 12),
+                        _DetailZeile(
+                            'Samen vorrätig', '${sorte.samenAnzahl}'),
+                        if (sorte.keimquote != null)
+                          _DetailZeile('Keimquote', '${sorte.keimquote}%'),
+                      ],
+                    ),
+                  ),
+                ),
 
                 // Bemerkung
                 if (sorte.bemerkung != null) ...[

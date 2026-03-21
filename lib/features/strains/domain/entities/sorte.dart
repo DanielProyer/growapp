@@ -3,6 +3,7 @@ class Sorte {
   final String id;
   final String name;
   final String? zuechter;
+  final String geschlecht;
   final String? kreuzung; // z.B. "Jelly Donutz #117 × Purple Cartel"
   final int indicaAnteil;
   final int sativaAnteil;
@@ -10,17 +11,17 @@ class Sorte {
   final double? cbdGehalt;
   final int? bluetezeitZuechter;
   final int? bluetezeitEigen;
+  final String? pflanzenhoheZuechter;
+  final String? pflanzenhoheEigen;
+  final String? ertragZuechter;
+  final String? ertragEigen;
   final int? keimquote;
-  final String? ertragSelektion;
-  final String? ertragProduktion;
   final String? aroma;
   final String? geschmack;
   final String? terpenprofil;
   final String? wirkungHigh;
   final String? growTipp;
-  final bool toppingEmpfohlen;
   final int samenAnzahl;
-  final bool hatMutterpflanze;
   final String status;
   final String? bemerkung;
   final String? erstelltVon;
@@ -31,6 +32,7 @@ class Sorte {
     required this.id,
     required this.name,
     this.zuechter,
+    this.geschlecht = 'feminisiert',
     this.kreuzung,
     this.indicaAnteil = 0,
     this.sativaAnteil = 0,
@@ -38,17 +40,17 @@ class Sorte {
     this.cbdGehalt,
     this.bluetezeitZuechter,
     this.bluetezeitEigen,
+    this.pflanzenhoheZuechter,
+    this.pflanzenhoheEigen,
+    this.ertragZuechter,
+    this.ertragEigen,
     this.keimquote,
-    this.ertragSelektion,
-    this.ertragProduktion,
     this.aroma,
     this.geschmack,
     this.terpenprofil,
     this.wirkungHigh,
     this.growTipp,
-    this.toppingEmpfohlen = false,
     this.samenAnzahl = 0,
-    this.hatMutterpflanze = false,
     this.status = 'aktiv',
     this.bemerkung,
     this.erstelltVon,
@@ -59,6 +61,8 @@ class Sorte {
   /// Status-Label für die Anzeige
   String get statusLabel {
     switch (status) {
+      case 'geplant':
+        return 'Geplant';
       case 'aktiv':
         return 'Aktiv';
       case 'selektion':
@@ -72,6 +76,20 @@ class Sorte {
     }
   }
 
+  /// Geschlecht-Label für die Anzeige
+  String get geschlechtLabel {
+    switch (geschlecht) {
+      case 'feminisiert':
+        return 'Feminisiert';
+      case 'regulaer':
+        return 'Regulär';
+      case 'automatik':
+        return 'Automatik';
+      default:
+        return geschlecht;
+    }
+  }
+
   /// Genetik-String (z.B. "70% Indica / 30% Sativa")
   String get genetik {
     if (indicaAnteil == 0 && sativaAnteil == 0) return 'Unbekannt';
@@ -82,6 +100,7 @@ class Sorte {
     String? id,
     String? name,
     String? zuechter,
+    String? geschlecht,
     String? kreuzung,
     int? indicaAnteil,
     int? sativaAnteil,
@@ -89,17 +108,17 @@ class Sorte {
     double? cbdGehalt,
     int? bluetezeitZuechter,
     int? bluetezeitEigen,
+    String? pflanzenhoheZuechter,
+    String? pflanzenhoheEigen,
+    String? ertragZuechter,
+    String? ertragEigen,
     int? keimquote,
-    String? ertragSelektion,
-    String? ertragProduktion,
     String? aroma,
     String? geschmack,
     String? terpenprofil,
     String? wirkungHigh,
     String? growTipp,
-    bool? toppingEmpfohlen,
     int? samenAnzahl,
-    bool? hatMutterpflanze,
     String? status,
     String? bemerkung,
     String? erstelltVon,
@@ -110,6 +129,7 @@ class Sorte {
       id: id ?? this.id,
       name: name ?? this.name,
       zuechter: zuechter ?? this.zuechter,
+      geschlecht: geschlecht ?? this.geschlecht,
       kreuzung: kreuzung ?? this.kreuzung,
       indicaAnteil: indicaAnteil ?? this.indicaAnteil,
       sativaAnteil: sativaAnteil ?? this.sativaAnteil,
@@ -117,17 +137,17 @@ class Sorte {
       cbdGehalt: cbdGehalt ?? this.cbdGehalt,
       bluetezeitZuechter: bluetezeitZuechter ?? this.bluetezeitZuechter,
       bluetezeitEigen: bluetezeitEigen ?? this.bluetezeitEigen,
+      pflanzenhoheZuechter: pflanzenhoheZuechter ?? this.pflanzenhoheZuechter,
+      pflanzenhoheEigen: pflanzenhoheEigen ?? this.pflanzenhoheEigen,
+      ertragZuechter: ertragZuechter ?? this.ertragZuechter,
+      ertragEigen: ertragEigen ?? this.ertragEigen,
       keimquote: keimquote ?? this.keimquote,
-      ertragSelektion: ertragSelektion ?? this.ertragSelektion,
-      ertragProduktion: ertragProduktion ?? this.ertragProduktion,
       aroma: aroma ?? this.aroma,
       geschmack: geschmack ?? this.geschmack,
       terpenprofil: terpenprofil ?? this.terpenprofil,
       wirkungHigh: wirkungHigh ?? this.wirkungHigh,
       growTipp: growTipp ?? this.growTipp,
-      toppingEmpfohlen: toppingEmpfohlen ?? this.toppingEmpfohlen,
       samenAnzahl: samenAnzahl ?? this.samenAnzahl,
-      hatMutterpflanze: hatMutterpflanze ?? this.hatMutterpflanze,
       status: status ?? this.status,
       bemerkung: bemerkung ?? this.bemerkung,
       erstelltVon: erstelltVon ?? this.erstelltVon,

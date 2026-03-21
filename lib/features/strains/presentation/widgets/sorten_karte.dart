@@ -15,6 +15,8 @@ class SortenKarte extends StatelessWidget {
 
   Color _statusFarbe(String status) {
     switch (status) {
+      case 'geplant':
+        return Colors.purple;
       case 'aktiv':
         return Colors.green;
       case 'selektion':
@@ -134,12 +136,11 @@ class SortenKarte extends StatelessWidget {
                       label: '${sorte.samenAnzahl} Samen',
                     ),
 
-                  // Mutterpflanze
-                  if (sorte.hatMutterpflanze)
-                    const _InfoChip(
-                      icon: Icons.park,
-                      label: 'Mutter',
-                    ),
+                  // Geschlecht
+                  _InfoChip(
+                    icon: Icons.eco_outlined,
+                    label: sorte.geschlechtLabel,
+                  ),
                 ],
               ),
             ],

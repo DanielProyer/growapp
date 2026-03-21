@@ -30,10 +30,12 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
   late final TextEditingController _cbdController;
   late final TextEditingController _bluetezeitZuechterController;
   late final TextEditingController _bluetezeitEigenController;
+  late final TextEditingController _pflanzenhoheZuechterController;
+  late final TextEditingController _pflanzenhoheEigenController;
+  late final TextEditingController _ertragZuechterController;
+  late final TextEditingController _ertragEigenController;
   late final TextEditingController _keimquoteController;
   late final TextEditingController _samenAnzahlController;
-  late final TextEditingController _ertragSelektionController;
-  late final TextEditingController _ertragProduktionController;
   late final TextEditingController _aromaController;
   late final TextEditingController _geschmackController;
   late final TextEditingController _terpenprofilController;
@@ -42,8 +44,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
   late final TextEditingController _bemerkungController;
 
   late String _status;
-  late bool _toppingEmpfohlen;
-  late bool _hatMutterpflanze;
+  late String _geschlecht;
 
   bool get _isEdit => widget.sorte != null;
 
@@ -60,10 +61,12 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
     _cbdController = TextEditingController(text: s?.cbdGehalt?.toString() ?? '');
     _bluetezeitZuechterController = TextEditingController(text: s?.bluetezeitZuechter?.toString() ?? '');
     _bluetezeitEigenController = TextEditingController(text: s?.bluetezeitEigen?.toString() ?? '');
+    _pflanzenhoheZuechterController = TextEditingController(text: s?.pflanzenhoheZuechter ?? '');
+    _pflanzenhoheEigenController = TextEditingController(text: s?.pflanzenhoheEigen ?? '');
+    _ertragZuechterController = TextEditingController(text: s?.ertragZuechter ?? '');
+    _ertragEigenController = TextEditingController(text: s?.ertragEigen ?? '');
     _keimquoteController = TextEditingController(text: s?.keimquote?.toString() ?? '');
     _samenAnzahlController = TextEditingController(text: '${s?.samenAnzahl ?? 0}');
-    _ertragSelektionController = TextEditingController(text: s?.ertragSelektion ?? '');
-    _ertragProduktionController = TextEditingController(text: s?.ertragProduktion ?? '');
     _aromaController = TextEditingController(text: s?.aroma ?? '');
     _geschmackController = TextEditingController(text: s?.geschmack ?? '');
     _terpenprofilController = TextEditingController(text: s?.terpenprofil ?? '');
@@ -71,8 +74,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
     _growTippController = TextEditingController(text: s?.growTipp ?? '');
     _bemerkungController = TextEditingController(text: s?.bemerkung ?? '');
     _status = s?.status ?? 'aktiv';
-    _toppingEmpfohlen = s?.toppingEmpfohlen ?? false;
-    _hatMutterpflanze = s?.hatMutterpflanze ?? false;
+    _geschlecht = s?.geschlecht ?? 'feminisiert';
   }
 
   @override
@@ -86,10 +88,12 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
     _cbdController.dispose();
     _bluetezeitZuechterController.dispose();
     _bluetezeitEigenController.dispose();
+    _pflanzenhoheZuechterController.dispose();
+    _pflanzenhoheEigenController.dispose();
+    _ertragZuechterController.dispose();
+    _ertragEigenController.dispose();
     _keimquoteController.dispose();
     _samenAnzahlController.dispose();
-    _ertragSelektionController.dispose();
-    _ertragProduktionController.dispose();
     _aromaController.dispose();
     _geschmackController.dispose();
     _terpenprofilController.dispose();
@@ -104,6 +108,19 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
     return v.isEmpty ? null : v;
   }
 
+  String _geschlechtLabel(String value) {
+    switch (value) {
+      case 'feminisiert':
+        return 'Feminisiert';
+      case 'regulaer':
+        return 'Regulär';
+      case 'automatik':
+        return 'Automatik';
+      default:
+        return value;
+    }
+  }
+
   Future<void> _speichern() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -114,6 +131,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
         id: widget.sorte?.id ?? '',
         name: _nameController.text.trim(),
         zuechter: _trimOrNull(_zuechterController),
+        geschlecht: _geschlecht,
         kreuzung: _trimOrNull(_kreuzungController),
         indicaAnteil: int.tryParse(_indicaController.text) ?? 0,
         sativaAnteil: int.tryParse(_sativaController.text) ?? 0,
@@ -121,17 +139,17 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
         cbdGehalt: double.tryParse(_cbdController.text),
         bluetezeitZuechter: int.tryParse(_bluetezeitZuechterController.text),
         bluetezeitEigen: int.tryParse(_bluetezeitEigenController.text),
+        pflanzenhoheZuechter: _trimOrNull(_pflanzenhoheZuechterController),
+        pflanzenhoheEigen: _trimOrNull(_pflanzenhoheEigenController),
+        ertragZuechter: _trimOrNull(_ertragZuechterController),
+        ertragEigen: _trimOrNull(_ertragEigenController),
         keimquote: int.tryParse(_keimquoteController.text),
         samenAnzahl: int.tryParse(_samenAnzahlController.text) ?? 0,
-        ertragSelektion: _trimOrNull(_ertragSelektionController),
-        ertragProduktion: _trimOrNull(_ertragProduktionController),
         aroma: _trimOrNull(_aromaController),
         geschmack: _trimOrNull(_geschmackController),
         terpenprofil: _trimOrNull(_terpenprofilController),
         wirkungHigh: _trimOrNull(_wirkungHighController),
         growTipp: _trimOrNull(_growTippController),
-        toppingEmpfohlen: _toppingEmpfohlen,
-        hatMutterpflanze: _hatMutterpflanze,
         status: _status,
         bemerkung: _trimOrNull(_bemerkungController),
       );
@@ -201,13 +219,30 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                     decoration: const InputDecoration(labelText: 'Züchter / Breeder', hintText: 'z.B. Barneys Farm'),
                   ),
                   const SizedBox(height: 12),
-                  DropdownButtonFormField<String>(
-                    initialValue: _status,
-                    decoration: const InputDecoration(labelText: 'Status'),
-                    items: AppConstants.sortenStatus
-                        .map((s) => DropdownMenuItem(value: s, child: Text(s[0].toUpperCase() + s.substring(1))))
-                        .toList(),
-                    onChanged: (v) { if (v != null) setState(() => _status = v); },
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _status,
+                          decoration: const InputDecoration(labelText: 'Status'),
+                          items: AppConstants.sortenStatus
+                              .map((s) => DropdownMenuItem(value: s, child: Text(s[0].toUpperCase() + s.substring(1))))
+                              .toList(),
+                          onChanged: (v) { if (v != null) setState(() => _status = v); },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _geschlecht,
+                          decoration: const InputDecoration(labelText: 'Geschlecht'),
+                          items: AppConstants.sortenGeschlecht
+                              .map((g) => DropdownMenuItem(value: g, child: Text(_geschlechtLabel(g))))
+                              .toList(),
+                          onChanged: (v) { if (v != null) setState(() => _geschlecht = v); },
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 28),
@@ -305,15 +340,15 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
 
                   const SizedBox(height: 28),
 
-                  // ── Blütezeit ──
-                  const _SectionHeader(title: 'Blütezeit'),
+                  // ── Anbau ──
+                  const _SectionHeader(title: 'Anbau'),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: TextFormField(
                           controller: _bluetezeitZuechterController,
-                          decoration: const InputDecoration(labelText: 'Züchterangabe (Tage)'),
+                          decoration: const InputDecoration(labelText: 'Blütezeit Züchter (Tage)'),
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
@@ -322,12 +357,58 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _bluetezeitEigenController,
-                          decoration: const InputDecoration(labelText: 'Eigene Erfahrung (Tage)'),
+                          decoration: const InputDecoration(labelText: 'Blütezeit Eigen (Tage)'),
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _pflanzenhoheZuechterController,
+                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Züchter', hintText: 'z.B. 80-100cm'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _pflanzenhoheEigenController,
+                          decoration: const InputDecoration(labelText: 'Pflanzenhöhe Eigen', hintText: 'z.B. 90cm'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _ertragZuechterController,
+                          decoration: const InputDecoration(labelText: 'Ertrag Züchter', hintText: 'z.B. 500-600g/m²'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _ertragEigenController,
+                          decoration: const InputDecoration(labelText: 'Ertrag Eigen', hintText: 'z.B. 450g/m²'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _growTippController,
+                    decoration: const InputDecoration(
+                      labelText: 'Grow-Tipp',
+                      hintText: 'Tipps zum Anbau dieser Sorte...',
+                      alignLabelWithHint: true,
+                    ),
+                    maxLines: 3,
                   ),
 
                   const SizedBox(height: 28),
@@ -355,64 +436,6 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SwitchListTile(
-                          title: const Text('Mutterpflanze vorhanden'),
-                          value: _hatMutterpflanze,
-                          onChanged: (v) => setState(() => _hatMutterpflanze = v),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // ── Ertrag ──
-                  const _SectionHeader(title: 'Ertrag'),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _ertragSelektionController,
-                          decoration: const InputDecoration(labelText: 'Ertrag Selektion'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _ertragProduktionController,
-                          decoration: const InputDecoration(labelText: 'Ertrag Produktion'),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // ── Anbau ──
-                  const _SectionHeader(title: 'Anbau'),
-                  const SizedBox(height: 12),
-                  SwitchListTile(
-                    title: const Text('Topping empfohlen'),
-                    value: _toppingEmpfohlen,
-                    onChanged: (v) => setState(() => _toppingEmpfohlen = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _growTippController,
-                    decoration: const InputDecoration(
-                      labelText: 'Grow-Tipp',
-                      hintText: 'Tipps zum Anbau dieser Sorte...',
-                      alignLabelWithHint: true,
-                    ),
-                    maxLines: 3,
                   ),
 
                   const SizedBox(height: 28),
