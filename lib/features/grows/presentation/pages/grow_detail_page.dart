@@ -46,6 +46,7 @@ class _DetailContent extends ConsumerWidget {
   Color _statusFarbe(String status) {
     switch (status) {
       case 'vorbereitung': return Colors.grey;
+      case 'keimung': return Colors.orange;
       case 'steckling': return Colors.teal;
       case 'vegetation': return Colors.lightGreen;
       case 'bluete': return Colors.purple;
@@ -156,22 +157,45 @@ class _DetailContent extends ConsumerWidget {
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: _statusFarbe(d.status).withAlpha(30),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                    color: _statusFarbe(d.status).withAlpha(100)),
-                              ),
-                              child: Text(
-                                d.statusLabel,
-                                style: TextStyle(
-                                  color: _statusFarbe(d.status),
-                                  fontWeight: FontWeight.w600,
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: (d.istSamen ? Colors.orange : Colors.teal).withAlpha(30),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                        color: (d.istSamen ? Colors.orange : Colors.teal).withAlpha(100)),
+                                  ),
+                                  child: Text(
+                                    d.typLabel,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: d.istSamen ? Colors.orange : Colors.teal,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: _statusFarbe(d.status).withAlpha(30),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                        color: _statusFarbe(d.status).withAlpha(100)),
+                                  ),
+                                  child: Text(
+                                    d.statusLabel,
+                                    style: TextStyle(
+                                      color: _statusFarbe(d.status),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -201,7 +225,7 @@ class _DetailContent extends ConsumerWidget {
                                   ?.copyWith(fontWeight: FontWeight.w600)),
                           const SizedBox(height: 12),
                           if (d.stecklingAnbauflaecheId != null)
-                            _DetailZeile('Steckling/Keimung',
+                            _DetailZeile(d.erstePhaseLabel,
                                 _flaecheLabel(d.stecklingAnbauflaecheName, d.stecklingZeltName)),
                           if (d.vegiAnbauflaecheId != null)
                             _DetailZeile('Vegetation',
@@ -228,7 +252,7 @@ class _DetailContent extends ConsumerWidget {
                                 ?.copyWith(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 12),
                         if (d.stecklingDatum != null)
-                          _DetailZeile('Steckling/Keimung', df.format(d.stecklingDatum!)),
+                          _DetailZeile(d.erstePhaseLabel, df.format(d.stecklingDatum!)),
                         if (d.vegiStart != null)
                           _DetailZeile('Vegi-Start', df.format(d.vegiStart!)),
                         if (d.blueteStart != null)

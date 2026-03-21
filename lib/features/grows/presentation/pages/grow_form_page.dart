@@ -28,6 +28,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
   String? _stecklingAnbauflaecheId;
   String? _vegiAnbauflaecheId;
   String? _blueteAnbauflaecheId;
+  late String _typ;
   late String _status;
   late final TextEditingController _pflanzenAnzahlController;
   late final TextEditingController _bemerkungController;
@@ -48,6 +49,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
     _stecklingAnbauflaecheId = d?.stecklingAnbauflaecheId;
     _vegiAnbauflaecheId = d?.vegiAnbauflaecheId;
     _blueteAnbauflaecheId = d?.blueteAnbauflaecheId;
+    _typ = d?.typ ?? 'steckling';
     _status = d?.status ?? 'vorbereitung';
     _pflanzenAnzahlController =
         TextEditingController(text: d?.pflanzenAnzahl?.toString() ?? '');
@@ -89,6 +91,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
       final d = Durchgang(
         id: widget.durchgang?.id ?? '',
         sorteId: _sorteId,
+        typ: _typ,
         status: _status,
         pflanzenAnzahl: int.tryParse(_pflanzenAnzahlController.text),
         stecklingAnbauflaecheId: _stecklingAnbauflaecheId,
@@ -210,14 +213,42 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
 
                   const SizedBox(height: 12),
 
+                  // Typ + Status
                   Row(
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
+                          initialValue: _typ,
+                          decoration:
+                              const InputDecoration(labelText: 'Typ *'),
+                          items: AppConstants.durchgangTypen
+                              .map((t) => DropdownMenuItem(
+                                  value: t,
+                                  child: Text(
+                                      t == 'samen' ? 'Samen' : 'Steckling')))
+                              .toList(),
+                          onChanged: (v) {
+                            if (v != null) {
+                              setState(() {
+                                _typ = v;
+                                // Status zurücksetzen wenn er nicht zum neuen Typ passt
+                                final erlaubt = AppConstants.durchgangStatusFuerTyp(v);
+                                if (!erlaubt.contains(_status)) {
+                                  _status = 'vorbereitung';
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          key: ValueKey('status-$_typ-$_status'),
                           initialValue: _status,
                           decoration:
                               const InputDecoration(labelText: 'Status'),
-                          items: AppConstants.durchgangStatus
+                          items: AppConstants.durchgangStatusFuerTyp(_typ)
                               .map((s) => DropdownMenuItem(
                                   value: s,
                                   child: Text(
@@ -254,9 +285,9 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Steckling-Anbaufläche
+                  // Erste Phase (abhängig vom Typ)
                   _AnbauflaecheDropdown(
-                    label: 'Steckling / Keimung',
+                    label: _typ == 'samen' ? 'Keimung' : 'Steckling',
                     value: _stecklingAnbauflaecheId,
                     optionen: flaechenOptionen,
                     onChanged: (v) =>
@@ -290,7 +321,7 @@ class _GrowFormPageState extends ConsumerState<GrowFormPage> {
                   const SizedBox(height: 12),
 
                   _DateField(
-                    label: 'Steckling/Keimung',
+                    label: _typ == 'samen' ? 'Keimung' : 'Steckling',
                     date: _stecklingDatum,
                     df: df,
                     onTap: () async {

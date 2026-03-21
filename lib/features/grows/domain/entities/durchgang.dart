@@ -2,6 +2,7 @@
 class Durchgang {
   final String id;
   final String? sorteId;
+  final String typ; // 'samen' oder 'steckling'
   final String status;
   final int? pflanzenAnzahl;
 
@@ -42,6 +43,7 @@ class Durchgang {
   const Durchgang({
     required this.id,
     this.sorteId,
+    this.typ = 'steckling',
     this.status = 'vorbereitung',
     this.pflanzenAnzahl,
     this.stecklingAnbauflaecheId,
@@ -72,11 +74,18 @@ class Durchgang {
     this.blueteZeltName,
   });
 
+  bool get istSamen => typ == 'samen';
+
+  /// Typ-Label für die Anzeige
+  String get typLabel => istSamen ? 'Samen' : 'Steckling';
+
   /// Status-Label für die Anzeige
   String get statusLabel {
     switch (status) {
       case 'vorbereitung':
         return 'Vorbereitung';
+      case 'keimung':
+        return 'Keimung';
       case 'steckling':
         return 'Steckling';
       case 'vegetation':
@@ -93,6 +102,9 @@ class Durchgang {
         return status;
     }
   }
+
+  /// Label für die erste Phase (abhängig vom Typ)
+  String get erstePhaseLabel => istSamen ? 'Keimung' : 'Steckling';
 
   /// Ist der Durchgang aktiv?
   bool get istAktiv => status != 'beendet';

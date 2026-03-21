@@ -32,8 +32,36 @@ class AppConstants {
   static const String tabelleKalenderEintraege = 'kalender_eintraege';
   static const String tabelleBenachrichtigungen = 'benachrichtigungen';
 
-  // Durchgang-Status
+  // Durchgang-Typen
+  static const List<String> durchgangTypen = [
+    'samen',
+    'steckling',
+  ];
+
+  // Durchgang-Status (alle möglichen)
   static const List<String> durchgangStatus = [
+    'vorbereitung',
+    'keimung',
+    'steckling',
+    'vegetation',
+    'bluete',
+    'ernte',
+    'curing',
+    'beendet',
+  ];
+
+  // Status pro Typ
+  static const List<String> durchgangStatusSamen = [
+    'vorbereitung',
+    'keimung',
+    'vegetation',
+    'bluete',
+    'ernte',
+    'curing',
+    'beendet',
+  ];
+
+  static const List<String> durchgangStatusSteckling = [
     'vorbereitung',
     'steckling',
     'vegetation',
@@ -42,6 +70,11 @@ class AppConstants {
     'curing',
     'beendet',
   ];
+
+  /// Status-Liste für einen bestimmten Typ
+  static List<String> durchgangStatusFuerTyp(String typ) {
+    return typ == 'samen' ? durchgangStatusSamen : durchgangStatusSteckling;
+  }
 
   // Pflanzen-Status
   static const List<String> pflanzenStatus = [

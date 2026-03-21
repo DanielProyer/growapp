@@ -5,6 +5,7 @@ class DurchgangModel extends Durchgang {
   const DurchgangModel({
     required super.id,
     super.sorteId,
+    super.typ,
     super.status,
     super.pflanzenAnzahl,
     super.stecklingAnbauflaecheId,
@@ -52,6 +53,7 @@ class DurchgangModel extends Durchgang {
     return DurchgangModel(
       id: json['id'] as String,
       sorteId: json['sorte_id'] as String?,
+      typ: json['typ'] as String? ?? 'steckling',
       status: json['status'] as String? ?? 'vorbereitung',
       pflanzenAnzahl: (json['pflanzen_anzahl'] as num?)?.toInt(),
       stecklingAnbauflaecheId: json['steckling_anbauflaeche_id'] as String?,
@@ -96,6 +98,7 @@ class DurchgangModel extends Durchgang {
     return DurchgangModel(
       id: d.id,
       sorteId: d.sorteId,
+      typ: d.typ,
       status: d.status,
       pflanzenAnzahl: d.pflanzenAnzahl,
       stecklingAnbauflaecheId: d.stecklingAnbauflaecheId,
@@ -133,6 +136,7 @@ class DurchgangModel extends Durchgang {
   Map<String, dynamic> toJson() {
     return {
       'sorte_id': sorteId,
+      'typ': typ,
       'status': status,
       'pflanzen_anzahl': pflanzenAnzahl,
       'steckling_anbauflaeche_id': stecklingAnbauflaecheId,
