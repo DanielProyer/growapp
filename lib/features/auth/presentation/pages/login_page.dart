@@ -131,6 +131,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           prefixIcon: Icon(Icons.lock_outlined),
                         ),
                         obscureText: true,
+                        onFieldSubmitted: (_) => _isLoading ? null : _submit(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Bitte Passwort eingeben';
