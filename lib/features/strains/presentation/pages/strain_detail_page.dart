@@ -6,60 +6,29 @@ import '../../domain/entities/sorte.dart';
 import '../providers/sorten_provider.dart';
 import 'strain_form_page.dart';
 
-class StrainDetailPage extends ConsumerWidget {
+class StrainDetailPage extends ConsumerStatefulWidget {
   final String strainId;
 
   const StrainDetailPage({super.key, required this.strainId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final sorteAsync = ref.watch(sorteProvider(strainId));
-
-    return sorteAsync.when(
-      data: (sorte) {
-        if (sorte == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Sorte')),
-            body: const Center(child: Text('Sorte nicht gefunden.')),
-          );
-        }
-        return _DetailContent(sorte: sorte);
-      },
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Sorte')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, _) => Scaffold(
-        appBar: AppBar(title: const Text('Sorte')),
-        body: Center(child: Text('Fehler: $error')),
-      ),
-    );
-  }
+  ConsumerState<StrainDetailPage> createState() => _StrainDetailPageState();
 }
 
-class _DetailContent extends ConsumerWidget {
-  final Sorte sorte;
-
-  const _DetailContent({required this.sorte});
-
-  Color _statusFarbe(String status) {
-    switch (status) {
-      case 'geplant':
-        return Colors.purple;
-      case 'aktiv':
-        return Colors.green;
-      case 'selektion':
-        return Colors.orange;
-      case 'beendet':
-        return Colors.grey;
-      case 'stash':
-        return Colors.blue;
-      default:
-        return Colors.grey;
+class _StrainDetailPageState extends ConsumerState<StrainDetailPage> {
+  Future<void> _bearbeiten(Sorte sorte) async {
+    final gespeichert = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => StrainFormPage(sorte: sorte),
+      ),
+    );
+    if (mounted && gespeichert == true) {
+      ref.invalidate(sortenListeProvider);
     }
   }
 
-  Future<void> _loeschen(BuildContext context, WidgetRef ref) async {
+  Future<void> _loeschen(Sorte sorte) async {
     final bestaetigt = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -79,17 +48,17 @@ class _DetailContent extends ConsumerWidget {
       ),
     );
 
-    if (bestaetigt == true && context.mounted) {
+    if (bestaetigt == true && mounted) {
       try {
         await ref.read(sortenListeProvider.notifier).loeschen(sorte.id);
-        if (context.mounted) {
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Sorte gelöscht')),
           );
           context.pop();
         }
       } catch (e) {
-        if (context.mounted) {
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Fehler: $e')),
           );
@@ -99,7 +68,65 @@ class _DetailContent extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final sorteAsync = ref.watch(sorteProvider(widget.strainId));
+
+    return sorteAsync.when(
+      data: (sorte) {
+        if (sorte == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Sorte')),
+            body: const Center(child: Text('Sorte nicht gefunden.')),
+          );
+        }
+        return _DetailContent(
+          sorte: sorte,
+          onBearbeiten: () => _bearbeiten(sorte),
+          onLoeschen: () => _loeschen(sorte),
+        );
+      },
+      loading: () => Scaffold(
+        appBar: AppBar(title: const Text('Sorte')),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        appBar: AppBar(title: const Text('Sorte')),
+        body: Center(child: Text('Fehler: $error')),
+      ),
+    );
+  }
+}
+
+class _DetailContent extends StatelessWidget {
+  final Sorte sorte;
+  final VoidCallback onBearbeiten;
+  final VoidCallback onLoeschen;
+
+  const _DetailContent({
+    required this.sorte,
+    required this.onBearbeiten,
+    required this.onLoeschen,
+  });
+
+  Color _statusFarbe(String status) {
+    switch (status) {
+      case 'geplant':
+        return Colors.purple;
+      case 'aktiv':
+        return Colors.green;
+      case 'selektion':
+        return Colors.orange;
+      case 'beendet':
+        return Colors.grey;
+      case 'stash':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -108,18 +135,11 @@ class _DetailContent extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => StrainFormPage(sorte: sorte),
-                ),
-              );
-            },
+            onPressed: onBearbeiten,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            onPressed: () => _loeschen(context, ref),
+            onPressed: onLoeschen,
           ),
         ],
       ),

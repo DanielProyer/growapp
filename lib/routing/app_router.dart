@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +13,8 @@ import '../features/grow_tents/presentation/pages/tent_detail_page.dart';
 import '../features/grows/presentation/pages/grows_page.dart';
 import '../features/grows/presentation/pages/grow_detail_page.dart';
 import '../features/daily_logs/presentation/pages/daily_logs_page.dart';
+import '../features/daily_logs/presentation/pages/daily_log_form_page.dart';
+import '../features/daily_logs/presentation/providers/tages_logs_provider.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -104,9 +107,58 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/logs',
             name: RouteNames.dailyLogs,
             builder: (context, state) => const DailyLogsPage(),
+            routes: [
+              GoRoute(
+                path: 'neu',
+                name: RouteNames.dailyLogCreate,
+                builder: (context, state) {
+                  final growId = state.uri.queryParameters['grow'];
+                  return DailyLogFormPage(
+                      vorausgewaehlterDurchgangId: growId);
+                },
+              ),
+              GoRoute(
+                path: ':id',
+                name: RouteNames.dailyLogDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return _DailyLogDetailLoader(logId: id);
+                },
+              ),
+            ],
           ),
         ],
       ),
     ],
   );
 });
+
+/// Lädt einen einzelnen Log und zeigt das Formular zum Bearbeiten
+class _DailyLogDetailLoader extends ConsumerWidget {
+  final String logId;
+  const _DailyLogDetailLoader({required this.logId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final logAsync = ref.watch(tagesLogProvider(logId));
+
+    return logAsync.when(
+      data: (log) {
+        if (log == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Log')),
+            body: const Center(child: Text('Log nicht gefunden')),
+          );
+        }
+        return DailyLogFormPage(log: log);
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => Scaffold(
+        appBar: AppBar(title: const Text('Fehler')),
+        body: Center(child: Text('Fehler: $error')),
+      ),
+    );
+  }
+}

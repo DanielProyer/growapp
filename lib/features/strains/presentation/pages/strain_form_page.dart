@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../../../app/constants/app_constants.dart';
 import '../../domain/entities/sorte.dart';
 import '../providers/sorten_provider.dart';
@@ -122,7 +120,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
   }
 
   Future<void> _speichern() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isLoading = true);
 
@@ -167,7 +165,7 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_isEdit ? 'Sorte aktualisiert' : 'Sorte erstellt')),
         );
-        context.pop();
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

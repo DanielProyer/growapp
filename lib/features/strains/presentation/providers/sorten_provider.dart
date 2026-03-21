@@ -46,11 +46,14 @@ class SortenListeNotifier extends AsyncNotifier<List<Sorte>> {
   }
 }
 
-/// Einzelne Sorte laden
-final sorteProvider =
-    FutureProvider.family<Sorte?, String>((ref, id) async {
-  final repo = ref.watch(sortenRepositoryProvider);
-  return await repo.laden(id);
+/// Einzelne Sorte (abgeleitet aus der Liste → aktualisiert sich automatisch)
+final sorteProvider = Provider.family<AsyncValue<Sorte?>, String>((ref, id) {
+  return ref.watch(sortenListeProvider).whenData((liste) {
+    for (final s in liste) {
+      if (s.id == id) return s;
+    }
+    return null;
+  });
 });
 
 /// Suchbegriff State

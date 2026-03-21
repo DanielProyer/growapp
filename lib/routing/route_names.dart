@@ -16,6 +16,8 @@ class RouteNames {
   static const String grows = 'grows';
   static const String growDetail = 'grow-detail';
   static const String dailyLogs = 'daily-logs';
+  static const String dailyLogCreate = 'daily-log-create';
+  static const String dailyLogDetail = 'daily-log-detail';
   static const String plants = 'plants';
   static const String plantDetail = 'plant-detail';
   static const String selection = 'selection';
