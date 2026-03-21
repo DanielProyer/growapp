@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../routing/app_router.dart';
@@ -19,6 +20,14 @@ class GrowApp extends ConsumerWidget {
       themeMode: ThemeMode.system,
       routerConfig: router,
       locale: const Locale('de', 'DE'),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('de', 'DE'),
+      ],
     );
   }
 }
