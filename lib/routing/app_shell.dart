@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../app/constants/app_constants.dart';
 
@@ -57,6 +58,29 @@ class AppShell extends StatelessWidget {
     context.go(_destinations[index].path);
   }
 
+  static Future<void> _abmelden(BuildContext context) async {
+    final bestaetigt = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Abmelden'),
+        content: const Text('Möchtest du dich wirklich abmelden?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Abmelden'),
+          ),
+        ],
+      ),
+    );
+    if (bestaetigt == true) {
+      await Supabase.instance.client.auth.signOut();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
@@ -105,14 +129,24 @@ class _MobileLayout extends StatelessWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
-        destinations: AppShell._destinations
-            .map((d) => NavigationDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: Icon(d.selectedIcon),
-                  label: d.label,
-                ))
-            .toList(),
+        onDestinationSelected: (index) {
+          if (index < AppShell._destinations.length) {
+            onDestinationSelected(index);
+          } else {
+            AppShell._abmelden(context);
+          }
+        },
+        destinations: [
+          ...AppShell._destinations.map((d) => NavigationDestination(
+                icon: Icon(d.icon),
+                selectedIcon: Icon(d.selectedIcon),
+                label: d.label,
+              )),
+          const NavigationDestination(
+            icon: Icon(Icons.logout),
+            label: 'Abmelden',
+          ),
+        ],
       ),
     );
   }
@@ -138,6 +172,19 @@ class _TabletLayout extends StatelessWidget {
             selectedIndex: selectedIndex,
             onDestinationSelected: onDestinationSelected,
             labelType: NavigationRailLabelType.all,
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'Abmelden',
+                    onPressed: () => AppShell._abmelden(context),
+                  ),
+                ),
+              ),
+            ),
             destinations: AppShell._destinations
                 .map((d) => NavigationRailDestination(
                       icon: Icon(d.icon),
@@ -239,6 +286,16 @@ class _DesktopLayout extends StatelessWidget {
                     ),
                   ),
                 ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: Icon(Icons.logout,
+                      color: theme.colorScheme.onSurfaceVariant),
+                  title: Text('Abmelden',
+                      style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant)),
+                  onTap: () => AppShell._abmelden(context),
+                ),
+                const SizedBox(height: 8),
               ],
             ),
           ),
