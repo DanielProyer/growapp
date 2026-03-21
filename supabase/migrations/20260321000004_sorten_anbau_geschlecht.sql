@@ -19,3 +19,8 @@ END $$;
 -- Nicht mehr benötigte Felder entfernen
 ALTER TABLE sorten DROP COLUMN IF EXISTS topping_empfohlen;
 ALTER TABLE sorten DROP COLUMN IF EXISTS hat_mutterpflanze;
+
+-- Status-Constraint um 'geplant' erweitern
+ALTER TABLE sorten DROP CONSTRAINT IF EXISTS sorten_status_check;
+ALTER TABLE sorten ADD CONSTRAINT sorten_status_check
+  CHECK (status = ANY (ARRAY['geplant', 'aktiv', 'selektion', 'beendet', 'stash']));
