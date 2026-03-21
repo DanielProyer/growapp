@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../strains/presentation/providers/sorten_provider.dart';
+import '../../../grow_tents/presentation/providers/zelte_provider.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sortenAsync = ref.watch(sortenListeProvider);
+    final zelteAsync = ref.watch(zelteListeProvider);
+
+    final sortenAnzahl = sortenAsync.valueOrNull?.length ?? 0;
+    final zelteAnzahl = zelteAsync.valueOrNull?.length ?? 0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -44,30 +54,34 @@ class DashboardPage extends ConsumerWidget {
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
                   childAspectRatio: 1.8,
-                  children: const [
+                  children: [
                     _StatCard(
                       title: 'Aktive Grows',
                       value: '0',
                       icon: Icons.eco,
                       color: Colors.green,
+                      onTap: () => context.go('/grows'),
+                    ),
+                    _StatCard(
+                      title: 'Zelte',
+                      value: '$zelteAnzahl',
+                      icon: Icons.house_outlined,
+                      color: Colors.teal,
+                      onTap: () => context.go('/zelte'),
+                    ),
+                    _StatCard(
+                      title: 'Sorten',
+                      value: '$sortenAnzahl',
+                      icon: Icons.category,
+                      color: Colors.orange,
+                      onTap: () => context.go('/sorten'),
                     ),
                     _StatCard(
                       title: 'Pflanzen',
                       value: '0',
                       icon: Icons.local_florist,
-                      color: Colors.teal,
-                    ),
-                    _StatCard(
-                      title: 'Mutterpflanzen',
-                      value: '0',
-                      icon: Icons.park,
                       color: Colors.brown,
-                    ),
-                    _StatCard(
-                      title: 'Sorten',
-                      value: '0',
-                      icon: Icons.category,
-                      color: Colors.orange,
+                      onTap: () {},
                     ),
                   ],
                 );
@@ -123,42 +137,48 @@ class _StatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   const _StatCard({
     required this.title,
     required this.value,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(icon, color: color, size: 28),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(icon, color: color, size: 28),
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
-            ),
-          ],
+                ],
+              ),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
