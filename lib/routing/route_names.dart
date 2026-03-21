@@ -1,0 +1,24 @@
+/// Benannte Routen für die App
+class RouteNames {
+  RouteNames._();
+
+  // Auth
+  static const String login = 'login';
+  static const String register = 'register';
+
+  // Hauptnavigation
+  static const String dashboard = 'dashboard';
+  static const String strains = 'strains';
+  static const String strainDetail = 'strain-detail';
+  static const String strainCreate = 'strain-create';
+  static const String growTents = 'grow-tents';
+  static const String growTentDetail = 'grow-tent-detail';
+  static const String grows = 'grows';
+  static const String growDetail = 'grow-detail';
+  static const String dailyLogs = 'daily-logs';
+  static const String plants = 'plants';
+  static const String plantDetail = 'plant-detail';
+  static const String selection = 'selection';
+  static const String mothers = 'mothers';
+  static const String settings = 'settings';
+}
