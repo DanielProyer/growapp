@@ -3,18 +3,21 @@ class Sorte {
   final String id;
   final String name;
   final String? zuechter;
+  final String? kreuzung; // z.B. "Jelly Donutz #117 × Purple Cartel"
   final int indicaAnteil;
   final int sativaAnteil;
   final double? thcGehalt;
   final double? cbdGehalt;
   final int? bluetezeitZuechter;
   final int? bluetezeitEigen;
-  final int? bluetezeitSicherheit;
   final int? keimquote;
   final String? ertragSelektion;
   final String? ertragProduktion;
+  final String? aroma;
   final String? geschmack;
-  final String? wirkung;
+  final String? terpenprofil;
+  final String? wirkungHigh;
+  final String? growTipp;
   final bool toppingEmpfohlen;
   final int samenAnzahl;
   final bool hatMutterpflanze;
@@ -28,18 +31,21 @@ class Sorte {
     required this.id,
     required this.name,
     this.zuechter,
+    this.kreuzung,
     this.indicaAnteil = 0,
     this.sativaAnteil = 0,
     this.thcGehalt,
     this.cbdGehalt,
     this.bluetezeitZuechter,
     this.bluetezeitEigen,
-    this.bluetezeitSicherheit,
     this.keimquote,
     this.ertragSelektion,
     this.ertragProduktion,
+    this.aroma,
     this.geschmack,
-    this.wirkung,
+    this.terpenprofil,
+    this.wirkungHigh,
+    this.growTipp,
     this.toppingEmpfohlen = false,
     this.samenAnzahl = 0,
     this.hatMutterpflanze = false,
@@ -76,18 +82,21 @@ class Sorte {
     String? id,
     String? name,
     String? zuechter,
+    String? kreuzung,
     int? indicaAnteil,
     int? sativaAnteil,
     double? thcGehalt,
     double? cbdGehalt,
     int? bluetezeitZuechter,
     int? bluetezeitEigen,
-    int? bluetezeitSicherheit,
     int? keimquote,
     String? ertragSelektion,
     String? ertragProduktion,
+    String? aroma,
     String? geschmack,
-    String? wirkung,
+    String? terpenprofil,
+    String? wirkungHigh,
+    String? growTipp,
     bool? toppingEmpfohlen,
     int? samenAnzahl,
     bool? hatMutterpflanze,
@@ -101,18 +110,21 @@ class Sorte {
       id: id ?? this.id,
       name: name ?? this.name,
       zuechter: zuechter ?? this.zuechter,
+      kreuzung: kreuzung ?? this.kreuzung,
       indicaAnteil: indicaAnteil ?? this.indicaAnteil,
       sativaAnteil: sativaAnteil ?? this.sativaAnteil,
       thcGehalt: thcGehalt ?? this.thcGehalt,
       cbdGehalt: cbdGehalt ?? this.cbdGehalt,
       bluetezeitZuechter: bluetezeitZuechter ?? this.bluetezeitZuechter,
       bluetezeitEigen: bluetezeitEigen ?? this.bluetezeitEigen,
-      bluetezeitSicherheit: bluetezeitSicherheit ?? this.bluetezeitSicherheit,
       keimquote: keimquote ?? this.keimquote,
       ertragSelektion: ertragSelektion ?? this.ertragSelektion,
       ertragProduktion: ertragProduktion ?? this.ertragProduktion,
+      aroma: aroma ?? this.aroma,
       geschmack: geschmack ?? this.geschmack,
-      wirkung: wirkung ?? this.wirkung,
+      terpenprofil: terpenprofil ?? this.terpenprofil,
+      wirkungHigh: wirkungHigh ?? this.wirkungHigh,
+      growTipp: growTipp ?? this.growTipp,
       toppingEmpfohlen: toppingEmpfohlen ?? this.toppingEmpfohlen,
       samenAnzahl: samenAnzahl ?? this.samenAnzahl,
       hatMutterpflanze: hatMutterpflanze ?? this.hatMutterpflanze,

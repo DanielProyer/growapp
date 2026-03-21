@@ -195,6 +195,8 @@ class _DetailContent extends ConsumerWidget {
                             style: theme.textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 12),
+                        if (sorte.kreuzung != null)
+                          _DetailZeile('Kreuzung', sorte.kreuzung!),
                         _DetailZeile('Indica / Sativa', sorte.genetik),
                         if (sorte.thcGehalt != null)
                           _DetailZeile('THC', '${sorte.thcGehalt}%'),
@@ -226,9 +228,6 @@ class _DetailContent extends ConsumerWidget {
                           if (sorte.bluetezeitEigen != null)
                             _DetailZeile(
                                 'Eigen', '${sorte.bluetezeitEigen} Tage'),
-                          if (sorte.bluetezeitSicherheit != null)
-                            _DetailZeile('Sicherheit',
-                                '${sorte.bluetezeitSicherheit} Tage'),
                         ],
                       ),
                     ),
@@ -253,8 +252,6 @@ class _DetailContent extends ConsumerWidget {
                           _DetailZeile('Keimquote', '${sorte.keimquote}%'),
                         _DetailZeile('Mutterpflanze',
                             sorte.hatMutterpflanze ? 'Ja' : 'Nein'),
-                        _DetailZeile('Topping empfohlen',
-                            sorte.toppingEmpfohlen ? 'Ja' : 'Nein'),
                       ],
                     ),
                   ),
@@ -262,22 +259,52 @@ class _DetailContent extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // Eigenschaften
-                if (sorte.geschmack != null || sorte.wirkung != null)
+                // Anbau
+                if (sorte.toppingEmpfohlen || sorte.growTipp != null)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Eigenschaften',
+                          Text('Anbau',
                               style: theme.textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.w600)),
                           const SizedBox(height: 12),
+                          _DetailZeile('Topping empfohlen',
+                              sorte.toppingEmpfohlen ? 'Ja' : 'Nein'),
+                          if (sorte.growTipp != null)
+                            _DetailZeile('Grow-Tipp', sorte.growTipp!),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
+                // Aroma, Geschmack & Wirkung
+                if (sorte.aroma != null ||
+                    sorte.geschmack != null ||
+                    sorte.terpenprofil != null ||
+                    sorte.wirkungHigh != null)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Aroma, Geschmack & Wirkung',
+                              style: theme.textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 12),
+                          if (sorte.aroma != null)
+                            _DetailZeile('Aroma', sorte.aroma!),
                           if (sorte.geschmack != null)
                             _DetailZeile('Geschmack', sorte.geschmack!),
-                          if (sorte.wirkung != null)
-                            _DetailZeile('Wirkung', sorte.wirkung!),
+                          if (sorte.terpenprofil != null)
+                            _DetailZeile('Terpenprofil', sorte.terpenprofil!),
+                          if (sorte.wirkungHigh != null)
+                            _DetailZeile('Wirkung & High', sorte.wirkungHigh!),
                         ],
                       ),
                     ),

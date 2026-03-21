@@ -88,6 +88,17 @@ class SortenKarte extends StatelessWidget {
                   ),
                 ),
 
+              // Kreuzung
+              if (sorte.kreuzung != null && sorte.kreuzung!.isNotEmpty)
+                Text(
+                  sorte.kreuzung!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[500],
+                    fontStyle: FontStyle.italic,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+
               const SizedBox(height: 12),
 
               // Info-Chips
