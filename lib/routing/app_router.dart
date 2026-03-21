@@ -7,7 +7,8 @@ import '../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../features/strains/presentation/pages/strains_page.dart';
 import '../features/strains/presentation/pages/strain_detail_page.dart';
 import '../features/strains/presentation/pages/strain_form_page.dart';
-import '../features/grow_tents/presentation/pages/grow_tents_page.dart';
+import '../features/grow_tents/presentation/pages/tents_page.dart';
+import '../features/grow_tents/presentation/pages/tent_detail_page.dart';
 import '../features/grows/presentation/pages/grows_page.dart';
 import '../features/daily_logs/presentation/pages/daily_logs_page.dart';
 import 'route_names.dart';
@@ -71,7 +72,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/zelte',
             name: RouteNames.growTents,
-            builder: (context, state) => const GrowTentsPage(),
+            builder: (context, state) => const TentsPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.tentDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return TentDetailPage(tentId: id);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/grows',

@@ -12,7 +12,7 @@ class RouteNames {
   static const String strainDetail = 'strain-detail';
   static const String strainCreate = 'strain-create';
   static const String growTents = 'grow-tents';
-  static const String growTentDetail = 'grow-tent-detail';
+  static const String tentDetail = 'tent-detail';
   static const String grows = 'grows';
   static const String growDetail = 'grow-detail';
   static const String dailyLogs = 'daily-logs';
