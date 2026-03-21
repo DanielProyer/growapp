@@ -388,14 +388,14 @@ class _StrainFormPageState extends ConsumerState<StrainFormPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _ertragZuechterController,
-                          decoration: const InputDecoration(labelText: 'Ertrag Züchter', hintText: 'z.B. 500-600g/m²'),
+                          decoration: const InputDecoration(labelText: 'Ertrag Züchter', suffixText: 'g/m²'),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: TextFormField(
                           controller: _ertragEigenController,
-                          decoration: const InputDecoration(labelText: 'Ertrag Eigen', hintText: 'z.B. 450g/m²'),
+                          decoration: const InputDecoration(labelText: 'Ertrag Eigen', suffixText: 'g/m²'),
                         ),
                       ),
                     ],
