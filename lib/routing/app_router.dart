@@ -10,6 +10,7 @@ import '../features/strains/presentation/pages/strain_form_page.dart';
 import '../features/grow_tents/presentation/pages/tents_page.dart';
 import '../features/grow_tents/presentation/pages/tent_detail_page.dart';
 import '../features/grows/presentation/pages/grows_page.dart';
+import '../features/grows/presentation/pages/grow_detail_page.dart';
 import '../features/daily_logs/presentation/pages/daily_logs_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
@@ -88,6 +89,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/grows',
             name: RouteNames.grows,
             builder: (context, state) => const GrowsPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.growDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return GrowDetailPage(growId: id);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/logs',

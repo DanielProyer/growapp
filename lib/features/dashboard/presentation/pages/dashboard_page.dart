@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../strains/presentation/providers/sorten_provider.dart';
 import '../../../grow_tents/presentation/providers/zelte_provider.dart';
+import '../../../grows/presentation/providers/grows_provider.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -13,8 +14,11 @@ class DashboardPage extends ConsumerWidget {
     final sortenAsync = ref.watch(sortenListeProvider);
     final zelteAsync = ref.watch(zelteListeProvider);
 
+    final aktiveGrowsAsync = ref.watch(aktiveDurchgaengeProvider);
+
     final sortenAnzahl = sortenAsync.valueOrNull?.length ?? 0;
     final zelteAnzahl = zelteAsync.valueOrNull?.length ?? 0;
+    final aktiveGrows = aktiveGrowsAsync.valueOrNull?.length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,7 +61,7 @@ class DashboardPage extends ConsumerWidget {
                   children: [
                     _StatCard(
                       title: 'Aktive Grows',
-                      value: '0',
+                      value: '$aktiveGrows',
                       icon: Icons.eco,
                       color: Colors.green,
                       onTap: () => context.go('/grows'),
