@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/supabase/supabase_client.dart';
 import '../../data/datasources/durchgaenge_datasource.dart';
+import '../../data/datasources/pflanzen_datasource.dart';
 import '../../data/models/durchgang_model.dart';
+import '../../data/models/pflanze_model.dart';
 import '../../domain/entities/durchgang.dart';
+import '../../domain/entities/pflanze.dart';
 
 final durchgaengeDatasourceProvider = Provider<DurchgaengeDatasource>((ref) {
   final client = ref.watch(supabaseClientProvider);
@@ -63,4 +66,28 @@ Future<void> durchgangErstellen(DurchgaengeDatasource ds, Durchgang d) async {
 /// Helper: Durchgang aktualisieren
 Future<void> durchgangAktualisieren(DurchgaengeDatasource ds, Durchgang d) async {
   await ds.aktualisieren(d.id, DurchgangModel.fromEntity(d));
+}
+
+// ── Pflanzen ──
+
+final pflanzenDatasourceProvider = Provider<PflanzenDatasource>((ref) {
+  final client = ref.watch(supabaseClientProvider);
+  return PflanzenDatasource(client);
+});
+
+/// Pflanzen für einen Durchgang
+final pflanzenProvider =
+    FutureProvider.family<List<Pflanze>, String>((ref, durchgangId) async {
+  final ds = ref.watch(pflanzenDatasourceProvider);
+  return await ds.fuerDurchgangLaden(durchgangId);
+});
+
+/// Helper: Pflanze erstellen
+Future<void> pflanzeErstellen(PflanzenDatasource ds, Pflanze p) async {
+  await ds.erstellen(PflanzeModel.fromEntity(p));
+}
+
+/// Helper: Pflanze aktualisieren
+Future<void> pflanzeAktualisieren(PflanzenDatasource ds, Pflanze p) async {
+  await ds.aktualisieren(p.id, PflanzeModel.fromEntity(p));
 }

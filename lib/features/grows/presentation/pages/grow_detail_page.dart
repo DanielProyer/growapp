@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../domain/entities/durchgang.dart';
 import '../providers/grows_provider.dart';
+import '../widgets/pflanzen_sektion.dart';
 import 'grow_form_page.dart';
 
 class GrowDetailPage extends ConsumerWidget {
@@ -339,6 +340,11 @@ class _DetailContent extends ConsumerWidget {
                     ),
                   ),
                 ],
+
+                const SizedBox(height: 24),
+
+                // ── Pflanzen ──
+                PflanzenSektion(durchgangId: d.id),
 
                 const SizedBox(height: 32),
               ],
