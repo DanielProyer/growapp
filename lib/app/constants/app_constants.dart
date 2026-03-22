@@ -132,12 +132,33 @@ class AppConstants {
     'vielleicht',
   ];
 
-  // Inventar-Kategorien
-  static const List<String> inventarKategorien = [
+  // Inventar-Typen
+  static const List<String> inventarTypen = [
+    'equipment',
+    'verbrauchsmaterial',
+  ];
+
+  // Inventar-Kategorien nach Typ
+  static const List<String> inventarKategorienEquipment = [
+    'beleuchtung',
+    'belueftung',
+    'bewaesserung',
+    'messinstrumente',
+    'zubehoer',
+    'sonstige',
+  ];
+
+  static const List<String> inventarKategorienVerbrauch = [
     'duenger',
     'schaedlingsbekaempfung',
     'medium',
-    'equipment',
     'sonstige',
   ];
+
+  /// Kategorien für einen bestimmten Typ
+  static List<String> inventarKategorienFuerTyp(String typ) {
+    return typ == 'equipment'
+        ? inventarKategorienEquipment
+        : inventarKategorienVerbrauch;
+  }
 }

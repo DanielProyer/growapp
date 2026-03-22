@@ -22,5 +22,7 @@ class RouteNames {
   static const String plantDetail = 'plant-detail';
   static const String selection = 'selection';
   static const String mothers = 'mothers';
+  static const String inventory = 'inventory';
+  static const String inventoryDetail = 'inventory-detail';
   static const String settings = 'settings';
 }

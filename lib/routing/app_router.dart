@@ -16,6 +16,8 @@ import '../features/grows/presentation/pages/grow_detail_page.dart';
 import '../features/daily_logs/presentation/pages/daily_logs_page.dart';
 import '../features/daily_logs/presentation/pages/daily_log_form_page.dart';
 import '../features/daily_logs/presentation/providers/tages_logs_provider.dart';
+import '../features/inventory/presentation/pages/inventory_page.dart';
+import '../features/inventory/presentation/pages/inventory_item_detail_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -131,6 +133,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return _DailyLogDetailLoader(logId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/inventar',
+            name: RouteNames.inventory,
+            builder: (context, state) => const InventoryPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.inventoryDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return InventoryItemDetailPage(itemId: id);
                 },
               ),
             ],
