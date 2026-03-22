@@ -26,5 +26,6 @@ class RouteNames {
   static const String inventoryDetail = 'inventory-detail';
   static const String pestManagement = 'pest-management';
   static const String pestIncidentDetail = 'pest-incident-detail';
+  static const String calendar = 'calendar';
   static const String settings = 'settings';
 }

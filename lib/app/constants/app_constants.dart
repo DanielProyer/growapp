@@ -163,6 +163,27 @@ class AppConstants {
     'vielleicht',
   ];
 
+  // Kalender-Typen
+  static const List<String> kalenderTypen = [
+    'bewaesserung',
+    'duengung',
+    'ernte',
+    'stecklinge',
+    'umtopfen',
+    'schaedlingskontrolle',
+    'foto',
+    'allgemein',
+  ];
+
+  // Erinnerungs-Optionen (Minuten vor dem Termin, 0 = keine)
+  static const List<int> erinnerungsOptionen = [
+    0,
+    15,
+    30,
+    60,
+    1440,
+  ];
+
   // Inventar-Typen
   static const List<String> inventarTypen = [
     'equipment',

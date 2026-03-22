@@ -20,6 +20,7 @@ import '../features/inventory/presentation/pages/inventory_page.dart';
 import '../features/inventory/presentation/pages/inventory_item_detail_page.dart';
 import '../features/pest_management/presentation/pages/pest_management_page.dart';
 import '../features/pest_management/presentation/pages/pest_incident_detail_page.dart';
+import '../features/calendar/presentation/pages/calendar_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -168,6 +169,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 },
               ),
             ],
+          ),
+          GoRoute(
+            path: '/kalender',
+            name: RouteNames.calendar,
+            builder: (context, state) => const CalendarPage(),
           ),
         ],
       ),

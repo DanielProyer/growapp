@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../strains/presentation/providers/sorten_provider.dart';
 import '../../../grow_tents/presentation/providers/zelte_provider.dart';
 import '../../../grows/presentation/providers/grows_provider.dart';
+import '../../../calendar/presentation/widgets/anstehende_termine_karte.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -28,9 +29,7 @@ class DashboardPage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Benachrichtigungen
-            },
+            onPressed: () => context.go('/kalender'),
           ),
         ],
       ),
@@ -93,6 +92,11 @@ class DashboardPage extends ConsumerWidget {
                 );
               },
             ),
+
+            const SizedBox(height: 24),
+
+            // Anstehende Termine
+            const AnstehendeTermineKarte(),
 
             const SizedBox(height: 32),
 
