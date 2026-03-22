@@ -62,4 +62,15 @@ class PflanzenDatasource {
         .delete()
         .eq('id', id);
   }
+
+  /// Anzahl aktiver Pflanzen (nicht beendet/entsorgt)
+  Future<int> aktiveAnzahl() async {
+    final response = await _client
+        .from(AppConstants.tabellePflanzen)
+        .select()
+        .not('status', 'in', '("beendet","entsorgt")')
+        .count(CountOption.exact);
+
+    return response.count;
+  }
 }

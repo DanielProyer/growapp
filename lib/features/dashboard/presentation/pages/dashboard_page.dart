@@ -15,10 +15,12 @@ class DashboardPage extends ConsumerWidget {
     final zelteAsync = ref.watch(zelteListeProvider);
 
     final aktiveGrowsAsync = ref.watch(aktiveDurchgaengeProvider);
+    final pflanzenAsync = ref.watch(aktivePflanzenAnzahlProvider);
 
     final sortenAnzahl = sortenAsync.valueOrNull?.length ?? 0;
     final zelteAnzahl = zelteAsync.valueOrNull?.length ?? 0;
     final aktiveGrows = aktiveGrowsAsync.valueOrNull?.length ?? 0;
+    final pflanzenAnzahl = pflanzenAsync.valueOrNull ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,10 +84,10 @@ class DashboardPage extends ConsumerWidget {
                     ),
                     _StatCard(
                       title: 'Pflanzen',
-                      value: '0',
+                      value: '$pflanzenAnzahl',
                       icon: Icons.local_florist,
                       color: Colors.brown,
-                      onTap: () {},
+                      onTap: () => context.go('/grows'),
                     ),
                   ],
                 );

@@ -75,6 +75,12 @@ final pflanzenDatasourceProvider = Provider<PflanzenDatasource>((ref) {
   return PflanzenDatasource(client);
 });
 
+/// Anzahl aktiver Pflanzen (für Dashboard)
+final aktivePflanzenAnzahlProvider = FutureProvider<int>((ref) async {
+  final ds = ref.watch(pflanzenDatasourceProvider);
+  return await ds.aktiveAnzahl();
+});
+
 /// Pflanzen für einen Durchgang
 final pflanzenProvider =
     FutureProvider.family<List<Pflanze>, String>((ref, durchgangId) async {

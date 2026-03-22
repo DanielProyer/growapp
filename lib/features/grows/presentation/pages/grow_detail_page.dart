@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/durchgang.dart';
+import '../../../photos/presentation/widgets/fotos_sektion.dart';
 import '../providers/grows_provider.dart';
 import '../widgets/pflanzen_sektion.dart';
 import 'grow_form_page.dart';
@@ -345,6 +346,11 @@ class _DetailContent extends ConsumerWidget {
 
                 // ── Pflanzen ──
                 PflanzenSektion(durchgangId: d.id),
+
+                const SizedBox(height: 24),
+
+                // ── Fotos ──
+                FotosSektion(durchgangId: d.id),
 
                 const SizedBox(height: 32),
               ],
