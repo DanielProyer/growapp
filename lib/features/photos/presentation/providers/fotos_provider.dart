@@ -15,3 +15,10 @@ final fotosProvider =
   final ds = ref.watch(fotosDatasourceProvider);
   return await ds.fuerPflanzeLaden(pflanzeId);
 });
+
+/// Fotos für ein Inventar-Item (chronologisch sortiert)
+final inventarFotosProvider =
+    FutureProvider.family<List<Foto>, String>((ref, inventarId) async {
+  final ds = ref.watch(fotosDatasourceProvider);
+  return await ds.fuerInventarItemLaden(inventarId);
+});

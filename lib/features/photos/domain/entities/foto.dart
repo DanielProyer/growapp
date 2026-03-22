@@ -10,6 +10,7 @@ class Foto {
   final String? pflanzeId;
   final String? durchgangId;
   final String? zeltId;
+  final String? inventarId;
   final DateTime? aufgenommenAm;
   final String erstelltVon;
   final DateTime erstelltAm;
@@ -26,6 +27,7 @@ class Foto {
     this.pflanzeId,
     this.durchgangId,
     this.zeltId,
+    this.inventarId,
     this.aufgenommenAm,
     required this.erstelltVon,
     required this.erstelltAm,

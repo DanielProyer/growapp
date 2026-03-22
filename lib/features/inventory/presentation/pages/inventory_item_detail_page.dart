@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../../photos/domain/entities/foto.dart';
+import '../../../photos/presentation/pages/foto_detail_page.dart';
+import '../../../photos/presentation/providers/fotos_provider.dart';
+import '../../../photos/presentation/widgets/foto_karte.dart';
 import '../../domain/entities/inventar_item.dart';
 import '../../domain/entities/inventar_buchung.dart';
 import '../providers/inventar_provider.dart';
@@ -347,6 +353,11 @@ class _DetailContent extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
+                // Fotos
+                _InventarFotosSektion(inventarId: item.id),
+
+                const SizedBox(height: 16),
+
                 // Buchungen
                 Card(
                   child: Padding(
@@ -452,6 +463,237 @@ class _DetailContent extends ConsumerWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InventarFotosSektion extends ConsumerWidget {
+  final String inventarId;
+
+  const _InventarFotosSektion({required this.inventarId});
+
+  Future<void> _fotoAufnehmen(
+    BuildContext context,
+    WidgetRef ref,
+    ImageSource source,
+  ) async {
+    final picker = ImagePicker();
+    final bild = await picker.pickImage(
+      source: source,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 85,
+    );
+    if (bild == null || !context.mounted) return;
+
+    // Nur Beschreibung abfragen (keine Kategorie für Inventar)
+    final beschreibung = await _beschreibungDialog(context);
+    if (beschreibung == null || !context.mounted) return;
+
+    try {
+      final bytes = await bild.readAsBytes();
+      final dateiName = '${const Uuid().v4()}.jpg';
+      final ds = ref.read(fotosDatasourceProvider);
+      await ds.hochladenFuerInventar(
+        bytes: bytes,
+        dateiName: dateiName,
+        inventarId: inventarId,
+        beschreibung: beschreibung.isEmpty ? null : beschreibung,
+      );
+      ref.invalidate(inventarFotosProvider(inventarId));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Foto hochgeladen')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler: $e')),
+        );
+      }
+    }
+  }
+
+  /// Dialog nur für Beschreibung (ohne Kategorie)
+  Future<String?> _beschreibungDialog(BuildContext context) async {
+    final ctrl = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Foto-Beschreibung'),
+        content: TextField(
+          controller: ctrl,
+          decoration: const InputDecoration(
+            labelText: 'Beschreibung',
+            hintText: 'Optional',
+          ),
+          textCapitalization: TextCapitalization.sentences,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _fotoLoeschen(
+    BuildContext context,
+    WidgetRef ref,
+    Foto foto,
+  ) async {
+    final bestaetigt = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Foto löschen'),
+        content: Text('Möchtest du "${foto.bezeichnung}" wirklich löschen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Löschen'),
+          ),
+        ],
+      ),
+    );
+
+    if (bestaetigt == true && context.mounted) {
+      try {
+        final ds = ref.read(fotosDatasourceProvider);
+        await ds.loeschen(foto.id, foto.speicherPfad);
+        ref.invalidate(inventarFotosProvider(inventarId));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Foto gelöscht')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Fehler: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  void _vollbildAnzeigen(
+    BuildContext context,
+    List<Foto> fotos,
+    int index,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FotoDetailPage(fotos: fotos, startIndex: index),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final fotosAsync = ref.watch(inventarFotosProvider(inventarId));
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    fotosAsync.whenOrNull(
+                          data: (f) => 'Fotos (${f.length})',
+                        ) ??
+                        'Fotos',
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                PopupMenuButton<ImageSource>(
+                  onSelected: (source) =>
+                      _fotoAufnehmen(context, ref, source),
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: ImageSource.camera,
+                      child: ListTile(
+                        leading: Icon(Icons.camera_alt),
+                        title: Text('Kamera'),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: ImageSource.gallery,
+                      child: ListTile(
+                        leading: Icon(Icons.photo_library),
+                        title: Text('Galerie'),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
+                  offset: const Offset(0, 40),
+                  child: const Icon(Icons.add_a_photo),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            fotosAsync.when(
+              data: (fotos) {
+                if (fotos.isEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Center(
+                      child: Text(
+                        'Noch keine Fotos vorhanden',
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                    ),
+                  );
+                }
+
+                return SizedBox(
+                  height: 100,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: fotos.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) => SizedBox(
+                      width: 100,
+                      child: FotoKarte(
+                        foto: fotos[index],
+                        onTap: () =>
+                            _vollbildAnzeigen(context, fotos, index),
+                        onDelete: () =>
+                            _fotoLoeschen(context, ref, fotos[index]),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              loading: () => const SizedBox(
+                height: 100,
+                child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
+              ),
+              error: (e, _) => Text('Fehler: $e'),
+            ),
+          ],
         ),
       ),
     );
