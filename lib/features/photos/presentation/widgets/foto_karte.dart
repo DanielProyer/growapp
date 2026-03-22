@@ -65,8 +65,9 @@ class FotoKarte extends StatelessWidget {
               ),
             ),
 
-            // Beschreibung-Overlay
-            if (foto.beschreibung != null && foto.beschreibung!.isNotEmpty)
+            // Kategorie/Beschreibung-Overlay
+            if (foto.kategorie != null ||
+                (foto.beschreibung != null && foto.beschreibung!.isNotEmpty))
               Positioned(
                 left: 0,
                 right: 0,
@@ -82,12 +83,14 @@ class FotoKarte extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    foto.beschreibung!,
+                    foto.kategorie != null
+                        ? foto.kategorieLabel
+                        : foto.beschreibung!,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 11,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

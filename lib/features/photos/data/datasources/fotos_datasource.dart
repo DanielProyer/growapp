@@ -41,6 +41,7 @@ class FotosDatasource {
           'speicher_pfad': fotos[i].speicherPfad,
           'vorschau_pfad': fotos[i].vorschauPfad,
           'beschreibung': fotos[i].beschreibung,
+          'kategorie': fotos[i].kategorie,
           'pflanze_id': fotos[i].pflanzeId,
           'durchgang_id': fotos[i].durchgangId,
           'zelt_id': fotos[i].zeltId,
@@ -58,6 +59,7 @@ class FotosDatasource {
     required Uint8List bytes,
     required String dateiName,
     required String pflanzeId,
+    String? kategorie,
     String? beschreibung,
     DateTime? aufgenommenAm,
   }) async {
@@ -77,6 +79,7 @@ class FotosDatasource {
         .insert({
           'speicher_pfad': pfad,
           'pflanze_id': pflanzeId,
+          'kategorie': kategorie,
           'beschreibung': beschreibung,
           'aufgenommen_am': (aufgenommenAm ?? DateTime.now()).toIso8601String(),
         })

@@ -29,9 +29,9 @@ class FotosSektion extends ConsumerWidget {
     if (bild == null) return;
     if (!context.mounted) return;
 
-    // Beschreibung abfragen
-    final beschreibung = await _beschreibungDialog(context);
-    if (!context.mounted) return;
+    // Kategorie + Beschreibung abfragen
+    final details = await _fotoDetailsDialog(context);
+    if (details == null || !context.mounted) return;
 
     try {
       final bytes = await bild.readAsBytes();
@@ -41,7 +41,8 @@ class FotosSektion extends ConsumerWidget {
         bytes: bytes,
         dateiName: dateiName,
         pflanzeId: pflanzeId,
-        beschreibung: beschreibung,
+        kategorie: details.kategorie,
+        beschreibung: details.beschreibung,
         aufgenommenAm: DateTime.now(),
       );
       ref.invalidate(fotosProvider(pflanzeId));
@@ -59,30 +60,59 @@ class FotosSektion extends ConsumerWidget {
     }
   }
 
-  Future<String?> _beschreibungDialog(BuildContext context) async {
-    final controller = TextEditingController();
-    return showDialog<String>(
+  Future<_FotoDetails?> _fotoDetailsDialog(BuildContext context) async {
+    final beschreibungCtrl = TextEditingController();
+    String kategorie = Foto.kategorien.first;
+
+    return showDialog<_FotoDetails>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Beschreibung'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Optional: Beschreibung eingeben',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: const Text('Foto-Details'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                initialValue: kategorie,
+                decoration: const InputDecoration(labelText: 'Kategorie'),
+                items: Foto.kategorien
+                    .map((k) => DropdownMenuItem(
+                          value: k,
+                          child: Text(Foto.kategorieLabelFuer(k)),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => kategorie = v!),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: beschreibungCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Beschreibung',
+                  hintText: 'Optional',
+                ),
+                textCapitalization: TextCapitalization.sentences,
+              ),
+            ],
           ),
-          autofocus: true,
-          textCapitalization: TextCapitalization.sentences,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Abbrechen'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(
+                ctx,
+                _FotoDetails(
+                  kategorie: kategorie,
+                  beschreibung: beschreibungCtrl.text.trim().isEmpty
+                      ? null
+                      : beschreibungCtrl.text.trim(),
+                ),
+              ),
+              child: const Text('OK'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, null),
-            child: const Text('Überspringen'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }
@@ -237,4 +267,11 @@ class FotosSektion extends ConsumerWidget {
       ],
     );
   }
+}
+
+class _FotoDetails {
+  final String kategorie;
+  final String? beschreibung;
+
+  const _FotoDetails({required this.kategorie, this.beschreibung});
 }

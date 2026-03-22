@@ -50,17 +50,22 @@ class _FotoDetailPageState extends State<FotoDetailPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (foto.kategorie != null)
+              Text(
+                foto.kategorieLabel,
+                style: const TextStyle(fontSize: 16),
+              ),
             if (foto.beschreibung != null && foto.beschreibung!.isNotEmpty)
               Text(
                 foto.beschreibung!,
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: foto.kategorie != null ? 13 : 16,
+                  color: foto.kategorie != null ? Colors.white70 : Colors.white,
+                ),
               ),
             Text(
               df.format(datum),
-              style: TextStyle(
-                fontSize: foto.beschreibung != null ? 12 : 16,
-                color: Colors.white70,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.white70),
             ),
           ],
         ),
