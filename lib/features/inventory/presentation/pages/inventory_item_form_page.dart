@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../app/constants/app_constants.dart';
+import '../../../photos/presentation/providers/fotos_provider.dart';
 import '../../domain/entities/inventar_item.dart';
 import '../providers/inventar_provider.dart';
 
@@ -25,6 +28,9 @@ class _InventoryItemFormPageState
     extends ConsumerState<InventoryItemFormPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  Uint8List? _fotoBytes;
+  String? _fotoBeschreibung;
 
   late final TextEditingController _nameController;
   late final TextEditingController _einheitController;
@@ -120,6 +126,56 @@ class _InventoryItemFormPageState
         : menge.toStringAsFixed(2);
   }
 
+  Future<void> _fotoAuswaehlen(ImageSource source) async {
+    final picker = ImagePicker();
+    final bild = await picker.pickImage(
+      source: source,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 85,
+    );
+    if (bild == null || !mounted) return;
+
+    final bytes = await bild.readAsBytes();
+    if (!mounted) return;
+
+    // Beschreibung abfragen
+    final beschreibung = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        final ctrl = TextEditingController();
+        return AlertDialog(
+          title: const Text('Foto-Beschreibung'),
+          content: TextField(
+            controller: ctrl,
+            decoration: const InputDecoration(
+              labelText: 'Beschreibung',
+              hintText: 'Optional',
+            ),
+            textCapitalization: TextCapitalization.sentences,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Abbrechen'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (beschreibung == null || !mounted) return;
+
+    setState(() {
+      _fotoBytes = bytes;
+      _fotoBeschreibung = beschreibung.isEmpty ? null : beschreibung;
+    });
+  }
+
   Future<void> _speichern() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -145,10 +201,23 @@ class _InventoryItemFormPageState
       );
 
       final notifier = ref.read(inventarListeProvider.notifier);
+      InventarItem result;
       if (_isEdit) {
-        await notifier.artikelAktualisieren(widget.item!.id, item);
+        result = await notifier.artikelAktualisieren(widget.item!.id, item);
       } else {
-        await notifier.erstellen(item);
+        result = await notifier.erstellen(item);
+      }
+
+      // Foto hochladen wenn vorhanden
+      if (_fotoBytes != null) {
+        final ds = ref.read(fotosDatasourceProvider);
+        await ds.hochladenFuerInventar(
+          bytes: _fotoBytes!,
+          dateiName: '${const Uuid().v4()}.jpg',
+          inventarId: result.id,
+          beschreibung: _fotoBeschreibung,
+        );
+        ref.invalidate(inventarFotosProvider(result.id));
       }
 
       if (mounted) {
@@ -344,6 +413,85 @@ class _InventoryItemFormPageState
                     ),
                     maxLines: 4,
                   ),
+
+                  const SizedBox(height: 28),
+
+                  // ── Foto ──
+                  const _SectionHeader(title: 'Produktfoto'),
+                  const SizedBox(height: 12),
+                  if (_fotoBytes != null) ...[
+                    Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.memory(
+                            _fotoBytes!,
+                            height: 160,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Material(
+                            color: Colors.black45,
+                            borderRadius: BorderRadius.circular(16),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () => setState(() {
+                                _fotoBytes = null;
+                                _fotoBeschreibung = null;
+                              }),
+                              child: const Padding(
+                                padding: EdgeInsets.all(6),
+                                child: Icon(Icons.close,
+                                    size: 18, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_fotoBeschreibung != null) ...[
+                      const SizedBox(height: 4),
+                      Text(_fotoBeschreibung!,
+                          style: TextStyle(
+                              fontSize: 12, color: Colors.grey[600])),
+                    ],
+                  ] else
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) => SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.camera_alt),
+                                  title: const Text('Kamera'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _fotoAuswaehlen(ImageSource.camera);
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.photo_library),
+                                  title: const Text('Galerie'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _fotoAuswaehlen(ImageSource.gallery);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add_a_photo),
+                      label: const Text('Foto hinzufügen'),
+                    ),
 
                   const SizedBox(height: 32),
 
