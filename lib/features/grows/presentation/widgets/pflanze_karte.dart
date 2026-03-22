@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../photos/presentation/widgets/fotos_sektion.dart';
 import '../../domain/entities/pflanze.dart';
 
 class PflanzeKarte extends StatelessWidget {
@@ -128,6 +129,9 @@ class PflanzeKarte extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
+
+            // Fotos (Wachstumsverlauf)
+            FotosSektion(pflanzeId: pflanze.id),
           ],
         ),
       ),

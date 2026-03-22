@@ -9,9 +9,9 @@ final fotosDatasourceProvider = Provider<FotosDatasource>((ref) {
   return FotosDatasource(client);
 });
 
-/// Fotos für einen Durchgang
+/// Fotos für eine Pflanze (chronologisch sortiert)
 final fotosProvider =
-    FutureProvider.family<List<Foto>, String>((ref, durchgangId) async {
+    FutureProvider.family<List<Foto>, String>((ref, pflanzeId) async {
   final ds = ref.watch(fotosDatasourceProvider);
-  return await ds.fuerDurchgangLaden(durchgangId);
+  return await ds.fuerPflanzeLaden(pflanzeId);
 });

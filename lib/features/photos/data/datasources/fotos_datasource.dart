@@ -13,13 +13,13 @@ class FotosDatasource {
 
   static const _bucket = 'fotos';
 
-  /// Fotos für einen Durchgang laden (inkl. Signed URLs)
-  Future<List<FotoModel>> fuerDurchgangLaden(String durchgangId) async {
+  /// Fotos für eine Pflanze laden (chronologisch, älteste zuerst)
+  Future<List<FotoModel>> fuerPflanzeLaden(String pflanzeId) async {
     final response = await _client
         .from(AppConstants.tabelleFotos)
         .select()
-        .eq('durchgang_id', durchgangId)
-        .order('aufgenommen_am', ascending: false);
+        .eq('pflanze_id', pflanzeId)
+        .order('aufgenommen_am', ascending: true);
 
     final fotos = (response as List)
         .map((json) => FotoModel.fromJson(json as Map<String, dynamic>))
@@ -57,12 +57,12 @@ class FotosDatasource {
   Future<FotoModel> hochladen({
     required Uint8List bytes,
     required String dateiName,
-    required String durchgangId,
+    required String pflanzeId,
     String? beschreibung,
     DateTime? aufgenommenAm,
   }) async {
     final userId = _client.auth.currentUser!.id;
-    final pfad = '$userId/$durchgangId/$dateiName';
+    final pfad = '$userId/$pflanzeId/$dateiName';
 
     // In Storage hochladen
     await _client.storage.from(_bucket).uploadBinary(
@@ -76,7 +76,7 @@ class FotosDatasource {
         .from(AppConstants.tabelleFotos)
         .insert({
           'speicher_pfad': pfad,
-          'durchgang_id': durchgangId,
+          'pflanze_id': pflanzeId,
           'beschreibung': beschreibung,
           'aufgenommen_am': (aufgenommenAm ?? DateTime.now()).toIso8601String(),
         })

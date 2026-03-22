@@ -8,11 +8,11 @@ import '../pages/foto_detail_page.dart';
 import '../providers/fotos_provider.dart';
 import 'foto_karte.dart';
 
-/// Fotos-Sektion auf der Grow-Detailseite
+/// Fotos-Sektion für eine Einzelpflanze (Wachstumsverlauf)
 class FotosSektion extends ConsumerWidget {
-  final String durchgangId;
+  final String pflanzeId;
 
-  const FotosSektion({super.key, required this.durchgangId});
+  const FotosSektion({super.key, required this.pflanzeId});
 
   Future<void> _fotoAufnehmen(
     BuildContext context,
@@ -40,11 +40,11 @@ class FotosSektion extends ConsumerWidget {
       await ds.hochladen(
         bytes: bytes,
         dateiName: dateiName,
-        durchgangId: durchgangId,
+        pflanzeId: pflanzeId,
         beschreibung: beschreibung,
         aufgenommenAm: DateTime.now(),
       );
-      ref.invalidate(fotosProvider(durchgangId));
+      ref.invalidate(fotosProvider(pflanzeId));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Foto hochgeladen')),
@@ -115,7 +115,7 @@ class FotosSektion extends ConsumerWidget {
       try {
         final ds = ref.read(fotosDatasourceProvider);
         await ds.loeschen(foto.id, foto.speicherPfad);
-        ref.invalidate(fotosProvider(durchgangId));
+        ref.invalidate(fotosProvider(pflanzeId));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Foto gelöscht')),
@@ -146,26 +146,32 @@ class FotosSektion extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final fotosAsync = ref.watch(fotosProvider(durchgangId));
+    final fotosAsync = ref.watch(fotosProvider(pflanzeId));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 8),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              fotosAsync.whenOrNull(
-                    data: (f) => 'Fotos (${f.length})',
-                  ) ??
-                  'Fotos',
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w600),
+            Icon(Icons.photo_library_outlined,
+                size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                fotosAsync.whenOrNull(
+                      data: (f) => 'Fotos (${f.length})',
+                    ) ??
+                    'Fotos',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
             ),
             PopupMenuButton<ImageSource>(
-              onSelected: (source) =>
-                  _fotoAufnehmen(context, ref, source),
+              onSelected: (source) => _fotoAufnehmen(context, ref, source),
               itemBuilder: (_) => const [
                 PopupMenuItem(
                   value: ImageSource.camera,
@@ -185,64 +191,48 @@ class FotosSektion extends ConsumerWidget {
                 ),
               ],
               offset: const Offset(0, 40),
-              child: IgnorePointer(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_a_photo, size: 18),
-                  label: const Text('Foto'),
-                ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Icon(Icons.add_a_photo, size: 20),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         fotosAsync.when(
           data: (fotos) {
             if (fotos.isEmpty) {
-              return Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Icon(Icons.camera_alt_outlined,
-                            size: 40, color: Colors.grey[400]),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Noch keine Fotos',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Dokumentiere den Grow mit Fotos.',
-                          style:
-                              TextStyle(color: Colors.grey[500], fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  'Noch keine Fotos',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                 ),
               );
             }
 
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: fotos.length,
-              itemBuilder: (context, index) => FotoKarte(
-                foto: fotos[index],
-                onTap: () => _vollbildAnzeigen(context, fotos, index),
-                onDelete: () => _fotoLoeschen(context, ref, fotos[index]),
+            return SizedBox(
+              height: 100,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: fotos.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 6),
+                itemBuilder: (context, index) => SizedBox(
+                  width: 100,
+                  child: FotoKarte(
+                    foto: fotos[index],
+                    onTap: () => _vollbildAnzeigen(context, fotos, index),
+                    onDelete: () => _fotoLoeschen(context, ref, fotos[index]),
+                  ),
+                ),
               ),
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Text('Fehler: $e'),
+          loading: () => const SizedBox(
+            height: 100,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          ),
+          error: (e, _) => Text('Fehler: $e', style: const TextStyle(fontSize: 12)),
         ),
       ],
     );
