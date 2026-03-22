@@ -18,6 +18,8 @@ import '../features/daily_logs/presentation/pages/daily_log_form_page.dart';
 import '../features/daily_logs/presentation/providers/tages_logs_provider.dart';
 import '../features/inventory/presentation/pages/inventory_page.dart';
 import '../features/inventory/presentation/pages/inventory_item_detail_page.dart';
+import '../features/pest_management/presentation/pages/pest_management_page.dart';
+import '../features/pest_management/presentation/pages/pest_incident_detail_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -148,6 +150,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return InventoryItemDetailPage(itemId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/schaedlinge',
+            name: RouteNames.pestManagement,
+            builder: (context, state) => const PestManagementPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.pestIncidentDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return PestIncidentDetailPage(vorfallId: id);
                 },
               ),
             ],

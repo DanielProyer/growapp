@@ -22,3 +22,10 @@ final inventarFotosProvider =
   final ds = ref.watch(fotosDatasourceProvider);
   return await ds.fuerInventarItemLaden(inventarId);
 });
+
+/// Fotos für einen Schädlingsvorfall (chronologisch sortiert)
+final vorfallFotosProvider =
+    FutureProvider.family<List<Foto>, String>((ref, vorfallId) async {
+  final ds = ref.watch(fotosDatasourceProvider);
+  return await ds.fuerVorfallLaden(vorfallId);
+});

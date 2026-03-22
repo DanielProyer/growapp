@@ -50,6 +50,12 @@ class AppShell extends StatelessWidget {
       label: 'Inventar',
       path: '/inventar',
     ),
+    _NavDestination(
+      icon: Icons.bug_report_outlined,
+      selectedIcon: Icons.bug_report,
+      label: 'Schädlinge',
+      path: '/schaedlinge',
+    ),
   ];
 
   int _selectedIndex(BuildContext context) {

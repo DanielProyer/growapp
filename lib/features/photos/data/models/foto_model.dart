@@ -12,6 +12,7 @@ class FotoModel extends Foto {
     super.durchgangId,
     super.zeltId,
     super.inventarId,
+    super.vorfallId,
     super.aufgenommenAm,
     required super.erstelltVon,
     required super.erstelltAm,
@@ -29,6 +30,7 @@ class FotoModel extends Foto {
       durchgangId: json['durchgang_id'] as String?,
       zeltId: json['zelt_id'] as String?,
       inventarId: json['inventar_id'] as String?,
+      vorfallId: json['vorfall_id'] as String?,
       aufgenommenAm: _parseDateTime(json['aufgenommen_am']),
       erstelltVon: json['erstellt_von'] as String,
       erstelltAm: DateTime.parse(json['erstellt_am'] as String),
@@ -46,6 +48,7 @@ class FotoModel extends Foto {
       'durchgang_id': durchgangId,
       'zelt_id': zeltId,
       'inventar_id': inventarId,
+      'vorfall_id': vorfallId,
       'aufgenommen_am': aufgenommenAm?.toIso8601String(),
     };
   }

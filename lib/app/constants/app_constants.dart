@@ -26,6 +26,7 @@ class AppConstants {
   static const String tabelleCuringGlaeser = 'curing_glaeser';
   static const String tabelleCuringMesswerte = 'curing_messwerte';
   static const String tabelleSchaedlingsVorfaelle = 'schaedlings_vorfaelle';
+  static const String tabelleSchaedlingsBehandlungen = 'schaedlings_behandlungen';
   static const String tabelleInventar = 'inventar';
   static const String tabelleInventarBuchungen = 'inventar_buchungen';
   static const String tabelleFotos = 'fotos';
@@ -107,7 +108,37 @@ class AppConstants {
     'thripse',
     'spinnmilben',
     'trauermücken',
+    'blattlaeuse',
+    'weisse_fliegen',
+    'minierfliegen',
+    'breitmilben',
+    'rostmilben',
+    'raupen',
+    'echter_mehltau',
+    'falscher_mehltau',
+    'botrytis',
+    'wurzelfaeule',
+    'alternaria',
+    'septoria',
+    'umfallkrankheit',
     'sonstige',
+  ];
+
+  // Behandlungstypen
+  static const List<String> behandlungsTypen = [
+    'biologisch',
+    'chemisch',
+    'mechanisch',
+    'nuetzlinge',
+  ];
+
+  // Wirksamkeitsstufen
+  static const List<String> wirksamkeitsStufen = [
+    'keine',
+    'gering',
+    'mittel',
+    'gut',
+    'sehr_gut',
   ];
 
   // Schweregrade
