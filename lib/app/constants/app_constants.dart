@@ -217,6 +217,15 @@ class AppConstants {
         : inventarKategorienVerbrauch;
   }
 
+  // Curing-Status
+  static const List<String> curingStatus = ['trocknung', 'curing', 'fertig'];
+
+  // Trim-Methoden
+  static const List<String> trimMethoden = ['nassschnitt', 'trimbag', 'handschnitt'];
+
+  // Behältertypen
+  static const List<String> behaelterTypen = ['glas', 'grove_bag', 'cvault', 'eimer', 'sonstig'];
+
   // Selektions-Status
   static const List<String> selektionsStatus = ['aktiv', 'abgeschlossen'];
 

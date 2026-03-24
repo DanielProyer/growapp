@@ -25,6 +25,8 @@ import '../features/mothers/presentation/pages/mothers_page.dart';
 import '../features/mothers/presentation/pages/mother_detail_page.dart';
 import '../features/selection/presentation/pages/selections_page.dart';
 import '../features/selection/presentation/pages/selection_detail_page.dart';
+import '../features/curing/presentation/pages/curing_page.dart';
+import '../features/curing/presentation/pages/curing_glas_detail_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -200,6 +202,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return SelectionDetailPage(selektionId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/curing',
+            name: RouteNames.curing,
+            builder: (context, state) => const CuringPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.curingDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return CuringGlasDetailPage(glasId: id);
                 },
               ),
             ],
