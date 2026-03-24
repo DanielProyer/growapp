@@ -21,6 +21,7 @@ class RouteNames {
   static const String plants = 'plants';
   static const String plantDetail = 'plant-detail';
   static const String selection = 'selection';
+  static const String selectionDetail = 'selection-detail';
   static const String mothers = 'mothers';
   static const String motherDetail = 'mother-detail';
   static const String inventory = 'inventory';

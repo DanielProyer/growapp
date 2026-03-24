@@ -216,4 +216,33 @@ class AppConstants {
         ? inventarKategorienEquipment
         : inventarKategorienVerbrauch;
   }
+
+  // Selektions-Status
+  static const List<String> selektionsStatus = ['aktiv', 'abgeschlossen'];
+
+  // Wirkungstypen
+  static const List<String> wirkungsTypen = [
+    'aufputschend',
+    'ausgewogen',
+    'entspannend',
+    'narkotisch',
+  ];
+
+  // Aroma-Kategorien
+  static const List<String> aromaKategorien = [
+    'zitrus',
+    'frucht',
+    'suess',
+    'erdig',
+    'wuerzig',
+    'blumig',
+    'kiefer',
+    'gas',
+    'skunky',
+    'kaese',
+    'holzig',
+    'kaffee',
+    'kraeuter',
+    'hash',
+  ];
 }

@@ -23,6 +23,8 @@ import '../features/pest_management/presentation/pages/pest_incident_detail_page
 import '../features/calendar/presentation/pages/calendar_page.dart';
 import '../features/mothers/presentation/pages/mothers_page.dart';
 import '../features/mothers/presentation/pages/mother_detail_page.dart';
+import '../features/selection/presentation/pages/selections_page.dart';
+import '../features/selection/presentation/pages/selection_detail_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -183,6 +185,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return MotherDetailPage(mutterId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/selektion',
+            name: RouteNames.selection,
+            builder: (context, state) => const SelectionsPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: RouteNames.selectionDetail,
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return SelectionDetailPage(selektionId: id);
                 },
               ),
             ],
