@@ -57,6 +57,12 @@ class AppShell extends StatelessWidget {
       path: '/schaedlinge',
     ),
     _NavDestination(
+      icon: Icons.nature_outlined,
+      selectedIcon: Icons.nature,
+      label: 'Mütter',
+      path: '/muetter',
+    ),
+    _NavDestination(
       icon: Icons.calendar_month_outlined,
       selectedIcon: Icons.calendar_month,
       label: 'Kalender',

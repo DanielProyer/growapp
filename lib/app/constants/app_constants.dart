@@ -163,6 +163,9 @@ class AppConstants {
     'vielleicht',
   ];
 
+  // Mutterpflanzen-Status
+  static const List<String> mutterStatus = ['aktiv', 'entsorgt'];
+
   // Kalender-Typen
   static const List<String> kalenderTypen = [
     'bewaesserung',
