@@ -27,6 +27,7 @@ import '../features/selection/presentation/pages/selections_page.dart';
 import '../features/selection/presentation/pages/selection_detail_page.dart';
 import '../features/curing/presentation/pages/curing_page.dart';
 import '../features/curing/presentation/pages/curing_glas_detail_page.dart';
+import '../features/reports/presentation/pages/reports_page.dart';
 import 'route_names.dart';
 import 'app_shell.dart';
 
@@ -225,6 +226,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/kalender',
             name: RouteNames.calendar,
             builder: (context, state) => const CalendarPage(),
+          ),
+          GoRoute(
+            path: '/berichte',
+            name: RouteNames.reports,
+            builder: (context, state) => const ReportsPage(),
           ),
         ],
       ),

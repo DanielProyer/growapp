@@ -80,6 +80,12 @@ class AppShell extends StatelessWidget {
       label: 'Kalender',
       path: '/kalender',
     ),
+    _NavDestination(
+      icon: Icons.bar_chart_outlined,
+      selectedIcon: Icons.bar_chart,
+      label: 'Berichte',
+      path: '/berichte',
+    ),
   ];
 
   int _selectedIndex(BuildContext context) {

@@ -6,6 +6,9 @@ import '../../../strains/presentation/providers/sorten_provider.dart';
 import '../../../grow_tents/presentation/providers/zelte_provider.dart';
 import '../../../grows/presentation/providers/grows_provider.dart';
 import '../../../calendar/presentation/widgets/anstehende_termine_karte.dart';
+import '../../../reports/presentation/widgets/dashboard/dashboard_yield_mini.dart';
+import '../../../reports/presentation/widgets/dashboard/dashboard_environment_mini.dart';
+import '../../../reports/presentation/widgets/dashboard/dashboard_stats_card.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -88,6 +91,49 @@ class DashboardPage extends ConsumerWidget {
                       color: Colors.brown,
                       onTap: () => context.go('/grows'),
                     ),
+                  ],
+                );
+              },
+            ),
+
+            const SizedBox(height: 24),
+
+            // Berichte Mini-Charts
+            Row(
+              children: [
+                Text(
+                  'Berichte',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => context.go('/berichte'),
+                  child: const Text('Alle anzeigen'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth > 800) {
+                  return const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: DashboardYieldMini()),
+                      SizedBox(width: 12),
+                      Expanded(child: DashboardEnvironmentMini()),
+                      SizedBox(width: 12),
+                      Expanded(child: DashboardStatsCard()),
+                    ],
+                  );
+                }
+                return const Column(
+                  children: [
+                    DashboardYieldMini(),
+                    SizedBox(height: 8),
+                    DashboardEnvironmentMini(),
+                    SizedBox(height: 8),
+                    DashboardStatsCard(),
                   ],
                 );
               },

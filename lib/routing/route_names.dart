@@ -31,5 +31,6 @@ class RouteNames {
   static const String curing = 'curing';
   static const String curingDetail = 'curing-detail';
   static const String calendar = 'calendar';
+  static const String reports = 'reports';
   static const String settings = 'settings';
 }
